@@ -1,6 +1,8 @@
-// API client — proxied through Vite to http://localhost:8000
+// API client — em produção usa VITE_API_URL, em dev usa proxy do Vite
 
-const BASE_URL = '/api'
+const BASE_URL = import.meta.env.VITE_API_URL
+  ? `${import.meta.env.VITE_API_URL}/api`
+  : '/api'
 
 async function fetchJson<T>(path: string): Promise<T> {
   const res = await fetch(`${BASE_URL}${path}`)
