@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion'
+import { CssDrawer } from '@/components/ui/CssDrawer'
 
 const SKILLS = [
   { category: 'Frontend', items: ['React', 'TypeScript', 'JavaScript', 'HTML', 'CSS', 'Tailwind'] },
@@ -74,6 +75,11 @@ export function AboutSection() {
               <span className="text-text-secondary">Idiomas:</span>
               <span className="badge badge-blue">🇧🇷 Português nativo</span>
               <span className="badge badge-neutral">🇺🇸 Inglês intermediário</span>
+            </div>
+            
+            {/* 3D Drawer Fun Easter Egg Element */}
+            <div className="mt-12">
+              <CssDrawer />
             </div>
           </motion.div>
 

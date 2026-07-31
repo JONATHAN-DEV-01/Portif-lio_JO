@@ -75,6 +75,13 @@ export function ProjectsSection() {
           <p className="section-subtitle">
             Repositórios reais do GitHub — atualizados automaticamente em tempo real
           </p>
+
+          <div className="mt-6 p-4 rounded-lg bg-surface border border-accent-blue/20 text-sm text-text-secondary flex gap-3 items-start max-w-2xl">
+            <span className="text-accent-blue text-lg">ℹ️</span>
+            <p>
+              <strong className="text-text">Observação:</strong> O banco de dados está ativo apenas nos projetos <strong>Portifólio</strong> e <strong>Bolão WordCup</strong>. Nos demais repositórios, o banco de dados encontra-se suspenso no Supabase.
+            </p>
+          </div>
         </motion.div>
 
         {/* Filters */}

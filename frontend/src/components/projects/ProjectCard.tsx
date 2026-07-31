@@ -76,6 +76,43 @@ export function ProjectCard({ project, index, onClick }: ProjectCardProps) {
       {/* Deploy badge */}
       <DeployBadge isDeployed={project.is_deployed} />
 
+      {/* Deploy Image & Link */}
+      {project.is_deployed && project.homepage && (
+        <a 
+          href={project.homepage} 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="block my-2 rounded overflow-hidden border border-border hover:border-accent-blue transition-colors group/link"
+          onClick={(e) => e.stopPropagation()}
+          title={`Visitar deploy na Vercel: ${project.homepage}`}
+        >
+          <div className="relative aspect-[16/9] bg-surface-hover flex items-center justify-center">
+            <img 
+              src={`https://image.thum.io/get/width/500/crop/700/noanimate/${project.homepage}`} 
+              alt={`Preview de ${project.name}`}
+              className="w-full h-full object-cover"
+              loading="lazy"
+              onError={(e) => {
+                e.currentTarget.style.display = 'none';
+              }}
+            />
+            <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center opacity-0 group-hover/link:opacity-100 transition-opacity">
+               <span className="bg-background/90 text-text px-3 py-1.5 rounded text-xs font-mono border border-border flex items-center gap-2">
+                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                   <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                   <polyline points="15 3 21 3 21 9" />
+                   <line x1="10" y1="14" x2="21" y2="3" />
+                 </svg>
+                 Visitar Vercel
+               </span>
+               <span className="text-[10px] text-text-secondary mt-2 truncate max-w-[90%] font-mono">
+                 {project.homepage.replace(/^https?:\/\//, '')}
+               </span>
+            </div>
+          </div>
+        </a>
+      )}
+
       {/* Description */}
       <p className="text-text-secondary text-xs leading-relaxed line-clamp-2 flex-1">
         {project.description ?? 'Sem descrição disponível.'}
