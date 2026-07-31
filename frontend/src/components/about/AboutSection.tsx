@@ -36,14 +36,14 @@ export function AboutSection() {
           <div className="section-divider" />
         </motion.div>
 
-        <div className="grid lg:grid-cols-5 gap-10 mt-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-10 mt-8">
           {/* Bio */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="lg:col-span-3"
+            className="md:col-span-1 lg:col-span-3"
           >
             <p className="text-text-secondary leading-relaxed mb-6">
               Desenvolvedor Full Stack com expertise em <span className="text-text-primary font-medium">Python, Flask, React e DevOps</span>,
@@ -89,7 +89,7 @@ export function AboutSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="lg:col-span-2 space-y-4"
+            className="md:col-span-1 lg:col-span-2 space-y-4 mt-8 md:mt-0"
           >
             {SKILLS.map((group, gi) => (
               <motion.div

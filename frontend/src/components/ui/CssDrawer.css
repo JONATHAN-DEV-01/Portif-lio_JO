@@ -288,3 +288,15 @@
   0%, 100% { transform: translateY(12%)  translateZ(1px); }
   50%       { transform: translateY(-12%) translateZ(1px); }
 }
+
+/* ============================================================
+   Responsiveness
+   ============================================================ */
+@media (max-width: 640px) {
+  .chest-wrapper {
+    font-size: 6px; /* Scales down the entire drawer, as em is based on this */
+  }
+  .chest-scene {
+    height: 300px;
+  }
+}

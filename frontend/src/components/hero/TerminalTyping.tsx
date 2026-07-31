@@ -88,10 +88,10 @@ export function TerminalTyping() {
             {line.type === 'command' ? (
               <>
                 <span className="terminal-prompt shrink-0">$</span>
-                <span className="terminal-output">{line.text}</span>
+                <span className="terminal-output break-words break-all">{line.text}</span>
               </>
             ) : (
-              <span className="text-text-secondary pl-4">{line.text}</span>
+              <span className="text-text-secondary pl-4 break-words break-all">{line.text}</span>
             )}
           </div>
         ))}
@@ -100,7 +100,7 @@ export function TerminalTyping() {
         {isTyping && (
           <div className="terminal-line">
             <span className="terminal-prompt shrink-0">$</span>
-            <span className="terminal-output">
+            <span className="terminal-output break-words break-all">
               {currentText}
               <span className="animate-blink">▋</span>
             </span>

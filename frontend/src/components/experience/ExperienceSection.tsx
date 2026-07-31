@@ -110,10 +110,10 @@ export function ExperienceSection() {
           </a>
         </motion.div>
 
-        <div className="grid lg:grid-cols-3 gap-10">
+        <div className="grid md:grid-cols-3 gap-8 lg:gap-10">
 
           {/* Timeline — Experiência profissional */}
-          <div className="lg:col-span-2">
+          <div className="md:col-span-2">
             <h3 className="text-text-secondary text-xs font-semibold uppercase tracking-widest mb-6 flex items-center gap-2">
               <span className="w-4 h-px bg-accent-blue" />
               Experiência profissional

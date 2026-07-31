@@ -39,7 +39,7 @@ export function ProjectFilters({ filters, languages, onChange, total, visible }:
       </div>
 
       {/* Status filter */}
-      <div className="flex items-center gap-1 bg-surface border border-border rounded-lg p-1">
+      <div className="flex flex-wrap justify-center items-center gap-1 bg-surface border border-border rounded-lg p-1 w-full sm:w-auto">
         {(['all', 'deployed', 'not-deployed'] as const).map(s => (
           <button
             key={s}
@@ -60,7 +60,7 @@ export function ProjectFilters({ filters, languages, onChange, total, visible }:
       <select
         value={filters.language}
         onChange={e => set({ language: e.target.value })}
-        className="px-3 py-2 bg-surface border border-border rounded-lg text-sm text-text-secondary focus:outline-none focus:border-accent-blue cursor-pointer transition-colors"
+        className="px-3 py-2 bg-surface border border-border rounded-lg text-sm text-text-secondary focus:outline-none focus:border-accent-blue cursor-pointer transition-colors w-full sm:w-auto"
         id="filter-language"
         aria-label="Filtrar por linguagem"
       >
@@ -74,7 +74,7 @@ export function ProjectFilters({ filters, languages, onChange, total, visible }:
       <select
         value={filters.sort}
         onChange={e => set({ sort: e.target.value as FilterState['sort'] })}
-        className="px-3 py-2 bg-surface border border-border rounded-lg text-sm text-text-secondary focus:outline-none focus:border-accent-blue cursor-pointer transition-colors"
+        className="px-3 py-2 bg-surface border border-border rounded-lg text-sm text-text-secondary focus:outline-none focus:border-accent-blue cursor-pointer transition-colors w-full sm:w-auto"
         id="filter-sort"
         aria-label="Ordenar projetos"
       >

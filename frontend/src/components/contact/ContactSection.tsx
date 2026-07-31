@@ -29,7 +29,7 @@ export function ContactSection() {
     <section id="contato" className="py-24 bg-surface/30">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
 
-        <div className="grid lg:grid-cols-2 gap-12 items-start">
+        <div className="grid md:grid-cols-2 gap-8 lg:gap-12 items-start">
 
           {/* Left column: header + form */}
           <div>
