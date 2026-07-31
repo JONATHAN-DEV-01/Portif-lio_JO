@@ -1,0 +1,79 @@
+# ============================================================
+# Portfólio Jonathan Nascimento — .gitignore
+# Cobre: Python/FastAPI (backend) + Node/React/Vite (frontend)
+# ============================================================
+
+# ── Segurança (NUNCA commitar) ─────────────────────────────
+.env
+.env.local
+.env.*.local
+backend/.env
+*.pem
+*.key
+
+# ── Python ─────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+ENV/
+*.egg-info/
+dist/
+build/
+*.egg
+.eggs/
+pip-wheel-metadata/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.coverage
+htmlcov/
+*.log
+
+# Alembic migrations (manter o histórico, ignorar cache)
+backend/alembic/__pycache__/
+
+# ── Node / Frontend ────────────────────────────────────────
+frontend/node_modules/
+frontend/dist/
+frontend/.cache/
+frontend/.parcel-cache/
+frontend/.turbo/
+
+# TypeScript build info
+frontend/tsconfig.tsbuildinfo
+frontend/tsconfig.node.tsbuildinfo
+
+# ── Docker ─────────────────────────────────────────────────
+# (manter docker-compose.yml e Dockerfile — ignorar apenas dados)
+postgres_data/
+.docker/
+
+# ── IDEs e editores ────────────────────────────────────────
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ── OS ─────────────────────────────────────────────────────
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+desktop.ini
+
+# ── Outros ─────────────────────────────────────────────────
+*.bak
+*.tmp
+*.orig

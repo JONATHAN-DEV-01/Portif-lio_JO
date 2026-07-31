@@ -1,0 +1,20 @@
+{
+  // Usa o TypeScript instalado no projeto (v5.5) — resolve os erros de 'Cannot find module'
+  // no App.tsx e main.tsx (moduleResolution: "bundler" requer TS 5.0+)
+  "typescript.tsdk": "frontend/node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+
+  // Desabilita o validador CSS nativo — elimina todos os warnings de @tailwind e @apply
+  "css.validate": false,
+  "scss.validate": false,
+  "less.validate": false,
+
+  // Tailwind CSS IntelliSense
+  "editor.quickSuggestions": {
+    "strings": "on"
+  },
+  "tailwindCSS.includeLanguages": {
+    "typescriptreact": "html",
+    "typescript": "html"
+  }
+}

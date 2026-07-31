@@ -1,0 +1,22 @@
+{
+  // Use a versão do TypeScript instalada no projeto (5.5.x) em vez da embutida no VSCode
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+
+  // Desabilita o validador CSS nativo do VSCode — o Tailwind CSS IntelliSense assume o lugar
+  "css.validate": false,
+  "scss.validate": false,
+  "less.validate": false,
+
+  // Tailwind CSS IntelliSense — ativa autocomplete de classes e suprime os warnings de @apply/@tailwind
+  "editor.quickSuggestions": {
+    "strings": "on"
+  },
+  "tailwindCSS.includeLanguages": {
+    "typescriptreact": "html",
+    "typescript": "html"
+  },
+
+  // Extensões recomendadas para o projeto
+  "extensions.ignoreRecommendations": false
+}
