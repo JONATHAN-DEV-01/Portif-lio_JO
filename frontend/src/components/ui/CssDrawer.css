@@ -1,277 +1,281 @@
-/* CssDrawer.css — Fixed: overflow, clipping, drawer open behavior */
+/* ============================================================
+   CssDrawer — Filing Cabinet 3D
+   Ported from the original Stylus/Pug codepen
+   Units: em-based (font-size controls scale)
+   ============================================================ */
 
+/* Scene container — provides the perspective context */
 .chest-scene {
-  /* Isolate the 3D scene from the rest of the page */
-  perspective: 800px;
-  perspective-origin: 60% 40%;
   display: flex;
   justify-content: center;
   align-items: center;
-  /* Tall enough so the open drawers don't bleed outside */
-  height: 340px;
+  height: 380px;
   overflow: visible;
   position: relative;
 }
 
-.chest-wrapper {
-  /* Scoped custom properties */
-  --drawer-hover: 0.05;
-  --drawer-default: 0.01;
-  --drawer-limit: 0.9;
-  --chest-height: 30;
-  --chest-width: 20;
-  --chest-depth: 15;
-  --chest-frame: 1;
-  --chest-handle: hsl(0, 0%, 78%);
-  --chest-hue: 0;
-  --chest-saturation: 0%;
-  --drawer-one: hsl(0, 0%, 96%);
-  --drawer-two: hsl(0, 0%, 88%);
-  --drawer-three: hsl(0, 0%, 93%);
-  --chest-unit-one: hsl(var(--chest-hue), var(--chest-saturation), 48%);
-  --chest-unit-two: hsl(var(--chest-hue), var(--chest-saturation), 38%);
-  --chest-unit-three: hsl(var(--chest-hue), var(--chest-saturation), 18%);
-  --chest-unit-four: hsl(var(--chest-hue), var(--chest-saturation), 13%);
-  --drawer-transition: 0.25s;
-
-  /* font-size controls the overall scale */
-  font-size: 7px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
+/* All children need preserve-3d to render the 3D box correctly.
+   The perspective-origin is baked into the chest transform via perspective() */
+.chest-wrapper,
 .chest-wrapper *,
-.chest-wrapper *::after,
-.chest-wrapper *::before {
+.chest-wrapper *::before,
+.chest-wrapper *::after {
   box-sizing: border-box;
   transform-style: preserve-3d;
 }
 
+/* Scale knob: change font-size to resize everything */
+.chest-wrapper {
+  font-size: 8px; /* 1em = 8px */
+
+  /* CSS custom properties (all unitless, multiplied by 1em below) */
+  --h:  30;   /* cabinet height  */
+  --w:  20;   /* cabinet width   */
+  --d:  15;   /* cabinet depth   */
+  --f:   1;   /* frame thickness */
+
+  /* colour palette */
+  --c1: hsl(0,0%,50%);   /* front frame / dividers  */
+  --c2: hsl(0,0%,40%);   /* back / top / bottom     */
+  --c3: hsl(0,0%,20%);   /* side walls              */
+  --c4: hsl(0,0%,15%);   /* drawer fronts (dark)    */
+
+  --d1: hsl(0,0%,98%);   /* drawer interior back    */
+  --d2: hsl(0,0%,90%);   /* drawer interior sides   */
+  --d3: hsl(0,0%,95%);   /* drawer interior floor   */
+
+  --handle: hsl(0,0%,82%);
+
+  /* drawer open states */
+  --open-default: 0.01;
+  --open-hover:   0.05;
+  --open-limit:   0.9;
+  --tr: 0.25s;
+}
+
+/* ── Cabinet body ──────────────────────────────────────────── */
 .chest {
   position: relative;
-  height: calc(var(--chest-height) * 1em);
-  width: calc(var(--chest-width) * 1em);
-  color: hsl(0, 10%, 10%);
-  transform: rotateX(-20deg) rotateY(30deg);
+  height: calc(var(--h) * 1em);
+  width:  calc(var(--w) * 1em);
+  /* Perspective baked-in so we don't need a separate perspective container */
+  transform: perspective(900px) rotateX(-28deg) rotateY(36deg);
   transition: transform 0.5s ease;
-  /* Ensure drawers render in front */
-  transform-style: preserve-3d;
 }
-
-/* Subtle rotation on hover of the whole chest */
 .chest-scene:hover .chest {
-  transform: rotateX(-24deg) rotateY(35deg);
+  transform: perspective(900px) rotateX(-32deg) rotateY(40deg);
 }
 
-/* ── Chest panels ── */
+/* All panels are absolutely positioned inside .chest */
 .chest__panel {
   position: absolute;
 }
 
+/* Back face */
 .chest__panel--back {
-  background: var(--chest-unit-two);
   height: 100%;
-  width: 100%;
-  transform: translate3d(0, 0, calc(var(--chest-depth) * -0.5em));
+  width:  100%;
+  background: var(--c2);
+  transform: translateZ(calc(var(--d) * -0.5em));
 }
 
+/* Front face (outer shell — transparent, contains the frame child) */
 .chest__panel--front {
   height: 100%;
-  width: 100%;
-  transform: translate3d(0, 0, calc(var(--chest-depth) * 0.5em));
+  width:  100%;
+  transform: translateZ(calc(var(--d) * 0.5em));
 }
 
+/* Front frame overlay with divider lines */
 .chest__panel--front-frame {
-  height: 100%;
-  width: 100%;
-  border: calc(var(--chest-frame) * 1em) solid var(--chest-unit-one);
-  border-bottom-width: calc(var(--chest-frame) * 2em);
+  position: absolute;
+  inset: 0;
+  border: calc(var(--f) * 1em) solid var(--c1);
+  border-bottom-width: calc(var(--f) * 2em);
 }
-
 .chest__panel--front-frame::after,
 .chest__panel--front-frame::before {
   content: '';
-  background: var(--chest-unit-one);
-  height: calc(var(--chest-frame) * 1.5em);
-  width: 100%;
   position: absolute;
   left: 0;
+  width: 100%;
+  height: calc(var(--f) * 1.5em);
+  background: var(--c1);
+  transform: translateY(-50%);
 }
-.chest__panel--front-frame::after  { top: calc(100% / 3 * 1.01% - var(--chest-frame) * 0.75em); }
-.chest__panel--front-frame::before { top: calc(100% / 3 * 2.01% - var(--chest-frame) * 0.75em); }
+.chest__panel--front-frame::after  { top: calc(100% / 3 * 1.01%); }
+.chest__panel--front-frame::before { top: calc(100% / 3 * 2.01%); }
 
-.chest__panel--right,
-.chest__panel--left {
-  height: 100%;
-  top: 0;
-  width: calc(var(--chest-depth) * 1em);
-  background: var(--chest-unit-three);
-}
-
+/* Left & Right walls
+   Original trick: start at left:50%, translate-center, rotate, then push out on Z */
+.chest__panel--left,
 .chest__panel--right {
-  right: 0;
-  transform-origin: 100% 50%;
-  transform: rotateY(90deg) translateZ(calc(var(--chest-width) * 0.5em));
-}
-
-.chest__panel--left {
-  left: 0;
-  transform-origin: 0% 50%;
-  transform: rotateY(-90deg) translateZ(calc(var(--chest-width) * 0.5em));
-}
-
-.chest__panel--top,
-.chest__panel--bottom {
-  width: 100%;
-  height: calc(var(--chest-depth) * 1em);
-  background: var(--chest-unit-two);
-}
-
-.chest__panel--top {
-  top: 0;
-  transform-origin: 50% 0%;
-  transform: rotateX(90deg) translateZ(calc(var(--chest-depth) * -0.5em));
-  /* Slight extension to cover seams */
-  width: calc(100% + 0.1em);
-  left: -0.05em;
-}
-
-.chest__panel--bottom {
-  bottom: 0;
-  transform-origin: 50% 100%;
-  transform: rotateX(-90deg) translateZ(calc(var(--chest-depth) * -0.5em));
-}
-
-/* ── Drawer container ── */
-.chest__drawer {
-  --drawer-height: calc((var(--chest-height) - (5 * var(--chest-frame))) / 3);
   position: absolute;
-  top: var(--top, 0);
+  top: 0;
   left: 50%;
-  height: calc(var(--drawer-height) * 1em);
-  width: calc((var(--chest-width) - (2 * var(--chest-frame))) * 1em);
-  /* Position flush with front face */
-  transform: translate3d(-50%, 0, calc(var(--chest-depth) * 0.5em));
-  transform-style: preserve-3d;
+  height: 100%;
+  width: calc(var(--d) * 1em);
+  background: var(--c3);
+}
+.chest__panel--right {
+  width: calc(var(--d) * 1em + 2px); /* +2px to seal the seam */
+  transform: translate(-50%, 0) rotateY(90deg) translate3d(0, 0, calc(var(--w) *  0.5em));
+}
+.chest__panel--left {
+  transform: translate(-50%, 0) rotateY(90deg) translate3d(0, 0, calc(var(--w) * -0.5em));
 }
 
-.chest__drawer[data-position="1"] { --top: calc(var(--chest-frame) * 1em); }
-.chest__drawer[data-position="2"] { --top: calc(((2 * var(--chest-frame)) + var(--drawer-height)) * 1em); }
-.chest__drawer[data-position="3"] { --top: calc(((3 * var(--chest-frame)) + (2 * var(--drawer-height))) * 1em); }
+/* Top */
+.chest__panel--top {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width:  calc(var(--w) * 1em + 0.2em);
+  height: calc(var(--d) * 1em + 0.2em);
+  background: var(--c2);
+  transform: translate(-50%, -50%) rotateX(-90deg);
+}
 
-/* ── details / summary — control open / close ── */
+/* Bottom */
+.chest__panel--bottom {
+  position: absolute;
+  bottom: 0;
+  width:  calc(var(--w) * 1em);
+  height: calc(var(--d) * 1em);
+  background: var(--c2);
+  transform: translate(0, 50%) rotateX(-90deg);
+}
+
+/* ── Drawer slots ───────────────────────────────────────────── */
+.chest__drawer {
+  --dh: calc((var(--h) - 5 * var(--f)) / 3); /* drawer height (unitless) */
+
+  position: absolute;
+  left: 50%;
+  top: var(--drawer-top, 0);
+  height: calc(var(--dh) * 1em);
+  width:  calc((var(--w) - 2 * var(--f)) * 1em);
+  /* Sit flush with front face */
+  transform: translate3d(-50%, 0, calc(var(--d) * 0.5em + 0.5px));
+}
+
+.chest__drawer[data-position="1"] { --drawer-top: calc(var(--f) * 1em); }
+.chest__drawer[data-position="2"] { --drawer-top: calc((2 * var(--f) + var(--dh)) * 1em); }
+.chest__drawer[data-position="3"] { --drawer-top: calc((3 * var(--f) + 2 * var(--dh)) * 1em); }
+
+/* ── details = open/close controller ───────────────────────── */
 .chest__drawer details {
   position: absolute;
   inset: 0;
   cursor: pointer;
   outline: none;
   z-index: 20;
-  transform-style: preserve-3d;
-  transition: transform var(--drawer-transition) ease;
-  /* Default closed position */
-  transform: translate3d(0, 0, calc(var(--drawer-default) * var(--chest-depth) * 1em));
+  transition: transform var(--tr) ease;
+  transform: translate3d(0, 0, calc(var(--open-default) * var(--d) * 1em));
 }
 
+/* Hover nudge */
 .chest__drawer details:hover:not([open]) {
-  transform: translate3d(0, 0, calc(var(--drawer-hover) * var(--chest-depth) * 1em));
+  transform: translate3d(0, 0, calc(var(--open-hover) * var(--d) * 1em));
 }
 
+/* Fully open */
 .chest__drawer details[open] {
-  transform: translate3d(0, 0, calc(var(--drawer-limit) * var(--chest-depth) * 1em));
+  transform: translate3d(0, 0, calc(var(--open-limit) * var(--d) * 1em));
 }
 
+/* Summary = the clickable hit-target (invisible) */
 .chest__drawer summary {
   display: block;
-  height: 100%;
-  width: 100%;
-  outline: none;
+  position: absolute;
+  inset: 0;
   list-style: none;
-  position: relative;
+  outline: none;
 }
 .chest__drawer summary::-webkit-details-marker { display: none; }
 
-/* Handle bar drawn with a pseudo-element */
+/* Handle bar (drawn via pseudo-element in 3D) */
 .chest__drawer summary::after {
   content: '';
   position: absolute;
   inset: 0;
-  /* Handle: horizontal bar in the center */
+  /* Silver horizontal bar */
   background:
-    linear-gradient(var(--chest-handle), var(--chest-handle))
-    center 50% / 45% 12% no-repeat;
-  transform: translateZ(0.5em);
+    linear-gradient(var(--handle), var(--handle))
+    center 50% / 42% 10% no-repeat transparent;
+  transform: translateZ(0.6em);
 }
 
-/* ── Drawer inner structure ── */
+/* ── Drawer inner structure (moves with details) ────────────── */
 .drawer__structure {
   position: absolute;
   inset: 0;
-  transform-style: preserve-3d;
   pointer-events: none;
-  transition: transform var(--drawer-transition) ease;
-  /* Default position */
-  transform: translate3d(0, 0, calc(var(--drawer-default) * var(--chest-depth) * 1em));
+  transition: transform var(--tr) ease;
+  transform: translate3d(0, 0, calc(var(--open-default) * var(--d) * 1em));
 }
 
-/* Keep structure in sync with details element */
+/* Sync structure with details state */
 .chest__drawer details:hover:not([open]) + .drawer__structure {
-  transform: translate3d(0, 0, calc(var(--drawer-hover) * var(--chest-depth) * 1em));
+  transform: translate3d(0, 0, calc(var(--open-hover) * var(--d) * 1em));
 }
 .chest__drawer details[open] + .drawer__structure {
-  transform: translate3d(0, 0, calc(var(--drawer-limit) * var(--chest-depth) * 1em));
+  transform: translate3d(0, 0, calc(var(--open-limit) * var(--d) * 1em));
 }
 
-.drawer__panel {
-  position: absolute;
-}
+/* ── Drawer panels ─────────────────────────────────────────── */
+.drawer__panel { position: absolute; }
 
-/* Front face of drawer (dark, visible when closed) */
+/* Dark front face of the drawer */
 .drawer__panel--front {
-  inset: 0;
-  background: var(--chest-unit-four);
-  transform: translateZ(0.1em);
+  top: 50%;
+  left: 50%;
+  height: calc((var(--dh) + 0.6 * var(--f)) * 1em);
+  width:  calc((var(--w)  - 0.6 * var(--f)) * 1em);
+  background: var(--c4);
+  transform: translate3d(-50%, -50%, 0.5px);
 }
 
-/* Interior back panel — shows text */
+/* White interior back panel (shows text when open) */
 .drawer__panel--back {
-  height: 80%;
+  bottom: 1%;
+  left: 50%;
   width: 100%;
-  bottom: 0;
-  background: var(--drawer-one);
-  transform: translate3d(0, 0, calc(var(--chest-depth) * -1em));
-  text-align: center;
+  height: 65%;
+  background: var(--d1);
+  transform: translate3d(-50%, 0, calc(var(--d) * -1em));
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 3em;
   font-family: sans-serif;
   font-weight: bold;
+  font-size: 3em;
+  text-align: center;
   line-height: 1;
-  gap: 0.1em;
 }
 
 /* Interior floor */
 .drawer__panel--bottom {
-  height: calc(var(--chest-depth) * 1em);
+  bottom: 5%;
+  left: 50%;
   width: 100%;
-  bottom: 0;
-  background: var(--drawer-three);
+  height: calc(var(--d) * 1em);
+  background: var(--d3);
   transform-origin: 50% 100%;
-  transform: rotateX(90deg) translateZ(calc(var(--chest-depth) * -1em));
+  transform: translate(-50%, 0) rotateX(90deg);
 }
 
-/* Side walls */
+/* Interior side walls */
 .drawer__panel--left,
 .drawer__panel--right {
-  width: calc(var(--chest-depth) * 1em);
-  height: 80%;
-  bottom: 0;
-  background: var(--drawer-two);
+  bottom: 1%;
+  height: 65%;
+  width: calc(var(--d) * 1em);
+  background: var(--d2);
 }
 .drawer__panel--left {
   left: 0;
-  transform-origin: 0% 50%;
+  transform-origin: 0 50%;
   transform: rotateY(90deg);
 }
 .drawer__panel--right {
@@ -280,19 +284,20 @@
   transform: rotateY(-90deg);
 }
 
-/* ── Rainbow wave animation (3rd drawer "Awesome") ── */
+/* ── Rainbow wave letters (drawer 3) ───────────────────────── */
 .css-letter {
   color: hsl(var(--hue, 200), 80%, 55%);
   display: inline-block;
-  animation: cssWave 1s calc(var(--delay, 0) * -0.12s) infinite ease-in-out;
+  animation: cssWave 1s calc(var(--delay, 0) * -0.12s) infinite ease-in-out paused;
+  font-size: 0.65em; /* smaller so "RESTful" fits */
 }
 
-.chest__drawer details[open] ~ .drawer__structure .css-letter,
+/* Letters only animate while drawer is open */
 .chest__drawer details[open] + .drawer__structure .css-letter {
   animation-play-state: running;
 }
 
 @keyframes cssWave {
-  0%, 100% { transform: translateY(8%); }
-  50%       { transform: translateY(-8%); }
+  0%, 100% { transform: translateY(12%)  translateZ(1px); }
+  50%       { transform: translateY(-12%) translateZ(1px); }
 }
