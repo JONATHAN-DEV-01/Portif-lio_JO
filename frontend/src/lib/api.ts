@@ -67,7 +67,7 @@ export interface ContactPayload {
 // ---- API calls ----
 
 export const api = {
-  getProjects: () => fetchJson<Project[]>('/projects'),
+  getProjects: () => fetchJson<{projects: Project[]}>('/projects').then(res => res.projects),
   getProject: (name: string) => fetchJson<ProjectDetail>(`/projects/${name}`),
   getProfile: () => fetchJson<Profile>('/profile'),
   sendContact: (data: ContactPayload) => postJson('/contact', data),
