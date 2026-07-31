@@ -212,22 +212,28 @@
   transform: translate3d(-50%, -50%, 0.5px);
 }
 
-/* White interior back panel — NO X-translation, just push in Z.
-   Using left:0; width:100% avoids any cross-axis confusion. */
+/* White interior back wall — positioned as a vertical plane
+   at the rear of the drawer, rotated like the floor/ceiling.
+   The text only becomes visible when the drawer is open and
+   the viewer looks inside — it never bleeds outside the chest. */
 .drawer__panel--back {
-  bottom: 0; left: 0;
-  width: 100%; height: 68%;
+  bottom: 0;
+  left: 50%;
+  width: 100%;
+  height: calc(var(--dh) * 1em);
   background: var(--d1);
-  /* Push back exactly one depth unit in local Z */
-  transform: translateZ(calc(var(--d) * -1em));
+  /* Stand upright at the very back of the drawer */
+  transform-origin: 50% 100%;
+  transform: translate(-50%, 0) rotateX(-90deg) translateY(calc(var(--d) * -1em));
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: sans-serif;
   font-weight: bold;
-  font-size: 3em;
+  font-size: 2.5em;
   text-align: center;
   line-height: 1;
+  overflow: hidden;
 }
 
 /* Interior floor */
