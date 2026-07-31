@@ -242,6 +242,7 @@
   font-size: 3em;   /* 3 × 8px = 24px, doesn’t affect parent’s em */
   font-weight: bold;
   line-height: 1;
+  color: var(--c4); /* Escurece a fonte */
 }
 
 /* Interior floor */
