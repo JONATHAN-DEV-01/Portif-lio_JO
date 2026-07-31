@@ -29,7 +29,7 @@ export function CssDrawer() {
             </details>
             <div className="drawer__structure">
               <div className="drawer__panel drawer__panel--front" />
-              <div className="drawer__panel drawer__panel--back">CSS</div>
+              <div className="drawer__panel drawer__panel--back"><span className="drawer__label">CSS</span></div>
               <div className="drawer__panel drawer__panel--bottom" />
               <div className="drawer__panel drawer__panel--left" />
               <div className="drawer__panel drawer__panel--right" />
@@ -43,7 +43,7 @@ export function CssDrawer() {
             </details>
             <div className="drawer__structure">
               <div className="drawer__panel drawer__panel--front" />
-              <div className="drawer__panel drawer__panel--back">is</div>
+              <div className="drawer__panel drawer__panel--back"><span className="drawer__label">is</span></div>
               <div className="drawer__panel drawer__panel--bottom" />
               <div className="drawer__panel drawer__panel--left" />
               <div className="drawer__panel drawer__panel--right" />
@@ -58,17 +58,19 @@ export function CssDrawer() {
             <div className="drawer__structure">
               <div className="drawer__panel drawer__panel--front" />
               <div className="drawer__panel drawer__panel--back">
-                {restfulLetters.map((letter, i) => (
-                  <span
-                    key={i}
-                    className="css-letter"
-                    style={
-                      { '--hue': RESTFUL_HUES[i % RESTFUL_HUES.length], '--delay': i } as React.CSSProperties
-                    }
-                  >
-                    {letter}
-                  </span>
-                ))}
+                <span className="drawer__label">
+                  {restfulLetters.map((letter, i) => (
+                    <span
+                      key={i}
+                      className="css-letter"
+                      style={
+                        { '--hue': RESTFUL_HUES[i % RESTFUL_HUES.length], '--delay': i } as React.CSSProperties
+                      }
+                    >
+                      {letter}
+                    </span>
+                  ))}
+                </span>
               </div>
               <div className="drawer__panel drawer__panel--bottom" />
               <div className="drawer__panel drawer__panel--left" />

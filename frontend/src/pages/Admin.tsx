@@ -4,8 +4,11 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 const BASE = '/api'
 
 async function login(username: string, password: string) {
-  const form = new URLSearchParams({ username, password })
-  const res = await fetch(`${BASE}/admin/token`, { method: 'POST', body: form })
+  const res = await fetch(`${BASE}/admin/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, password }),
+  })
   if (!res.ok) throw new Error('Credenciais inválidas')
   return res.json()
 }

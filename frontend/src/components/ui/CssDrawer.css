@@ -214,31 +214,34 @@
   transform: translate3d(-50%, -50%, 0.5px);
 }
 
-/* White interior back wall — pushed back in Z like the original.
-   Hidden by default: CSS 3D has no real clipping between planes,
-   so we use opacity to prevent the panel from bleeding outside
-   the cabinet when the drawer is closed. */
+/* White interior back wall.
+   IMPORTANT: font-size must NOT be set on this element — if it were,
+   em in the transform would compute based on the new font-size (24px)
+   instead of the inherited 8px, pushing the panel 3x too far in Z. */
 .drawer__panel--back {
   height: 65%;
   background: var(--d1);
   bottom: 1%;
   left: 50%;
   width: 100%;
-  transform: translate3d(-50%, 0, calc(var(--d) * -1em));
+  transform: translate3d(-50%, 0, calc(var(--d) * -1em)); /* em = 8px ✓ */
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: sans-serif;
-  font-weight: bold;
-  font-size: 3em;
   text-align: center;
-  line-height: 1;
   opacity: 0;
   transition: opacity var(--tr) ease;
 }
 /* Only reveal the back panel content when the drawer is open */
 .chest__drawer details[open] + .drawer__structure .drawer__panel--back {
   opacity: 1;
+}
+/* Text label inside the back panel — font-size lives HERE, not on the panel */
+.drawer__label {
+  font-size: 3em;   /* 3 × 8px = 24px, doesn’t affect parent’s em */
+  font-weight: bold;
+  line-height: 1;
 }
 
 /* Interior floor */
