@@ -25,7 +25,8 @@
 .chest-wrapper *::after {
   box-sizing: border-box;
   transform-style: preserve-3d;
-  will-change: transform;
+  /* will-change: transform NOT applied globally — it creates
+     stacking contexts that break preserve-3d on all children */
 }
 
 .chest-wrapper {
@@ -213,8 +214,10 @@
   transform: translate3d(-50%, -50%, 0.5px);
 }
 
-/* White interior back wall — pushed back in Z exactly like the original.
-   Uses translateZ negative depth so it sits at the rear of the drawer. */
+/* White interior back wall — pushed back in Z like the original.
+   Hidden by default: CSS 3D has no real clipping between planes,
+   so we use opacity to prevent the panel from bleeding outside
+   the cabinet when the drawer is closed. */
 .drawer__panel--back {
   height: 65%;
   background: var(--d1);
@@ -230,6 +233,12 @@
   font-size: 3em;
   text-align: center;
   line-height: 1;
+  opacity: 0;
+  transition: opacity var(--tr) ease;
+}
+/* Only reveal the back panel content when the drawer is open */
+.chest__drawer details[open] + .drawer__structure .drawer__panel--back {
+  opacity: 1;
 }
 
 /* Interior floor */
