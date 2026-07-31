@@ -94,11 +94,10 @@ export function ExperienceSection() {
             <h2 className="section-title">Experiência & Formação</h2>
             <div className="section-divider" />
           </div>
-          {/* TODO: Jonathan — coloque o PDF do currículo na pasta public/ e atualize o link abaixo */}
+          {/* Link para download do currículo */}
           <a
-            href="/curriculo-jonathan-nascimento.pdf"
-            target="_blank"
-            rel="noopener noreferrer"
+            href="/curriculo-jonathan-nascimento.docx"
+            download="curriculo-jonathan-nascimento.docx"
             className="btn-secondary text-sm shrink-0 self-start sm:self-auto"
             id="download-resume"
           >
@@ -107,7 +106,7 @@ export function ExperienceSection() {
               <polyline points="7 10 12 15 17 10" />
               <line x1="12" y1="15" x2="12" y2="3" />
             </svg>
-            Baixar currículo (PDF)
+            Baixar currículo (.docx)
           </a>
         </motion.div>
 

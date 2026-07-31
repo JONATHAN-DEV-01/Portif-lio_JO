@@ -123,11 +123,10 @@ export function HeroSection() {
                   E-mail
                 </a>
 
-                {/* TODO: Jonathan adicionar o link do PDF do currículo */}
+                {/* Currículo DOCX */}
                 <a
-                  href="/curriculo-jonathan-nascimento.pdf"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href="/curriculo-jonathan-nascimento.docx"
+                  download="curriculo-jonathan-nascimento.docx"
                   className="btn-ghost"
                   id="hero-cta-resume"
                 >
@@ -137,7 +136,7 @@ export function HeroSection() {
                     <line x1="12" y1="18" x2="12" y2="12" />
                     <line x1="9" y1="15" x2="15" y2="15" />
                   </svg>
-                  Currículo PDF
+                  Currículo (.docx)
                 </a>
               </div>
 
