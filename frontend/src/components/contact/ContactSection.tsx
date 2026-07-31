@@ -29,24 +29,26 @@ export function ContactSection() {
     <section id="contato" className="py-24 bg-surface/30">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
 
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="mb-12"
-        >
-          <p className="text-accent-blue font-mono text-sm mb-2">// contato</p>
-          <h2 className="section-title">Vamos conversar?</h2>
-          <div className="section-divider" />
-          <p className="text-text-secondary max-w-xl">
-            Estou aberto a oportunidades, colaborações e projetos interessantes.
-            Me envie uma mensagem — responderei em breve!
-          </p>
-        </motion.div>
-
         <div className="grid lg:grid-cols-2 gap-12 items-start">
+
+          {/* Left column: header + form */}
+          <div>
+            {/* Header */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="mb-12"
+            >
+              <p className="text-accent-blue font-mono text-sm mb-2">// contato</p>
+              <h2 className="section-title">Vamos conversar?</h2>
+              <div className="section-divider" />
+              <p className="text-text-secondary max-w-xl">
+                Estou aberto a oportunidades, colaborações e projetos interessantes.
+                Me envie uma mensagem — responderei em breve!
+              </p>
+            </motion.div>
 
           {/* Contact form */}
           <motion.form
@@ -149,6 +151,7 @@ export function ContactSection() {
               )}
             </button>
           </motion.form>
+          </div>{/* end left column */}
 
           {/* Contact info */}
           <motion.div
