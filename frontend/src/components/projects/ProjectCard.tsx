@@ -1,6 +1,60 @@
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import type { Project } from '@/lib/api'
 import { DeployBadge } from '@/components/ui/Badge'
+
+function DeployPreview({ homepage, name }: { homepage: string; name: string }) {
+  const [imgError, setImgError] = useState(false)
+  const cleanUrl = homepage.replace(/^https?:\/\//, '')
+  const screenshotUrl = `https://api.microlink.io/?url=${encodeURIComponent(homepage)}&screenshot=true&meta=false&embed=screenshot.url`
+
+  return (
+    <a
+      href={homepage}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="block my-2 rounded-lg overflow-hidden border border-border hover:border-accent-blue transition-colors group/link"
+      onClick={(e) => e.stopPropagation()}
+      title={`Visitar: ${homepage}`}
+    >
+      <div className="relative w-full" style={{ aspectRatio: '16/9', minHeight: 120, background: '#0d1117' }}>
+        {!imgError ? (
+          <img
+            src={screenshotUrl}
+            alt={`Preview de ${name}`}
+            className="w-full h-full object-cover"
+            loading="lazy"
+            onError={() => setImgError(true)}
+            style={{ display: 'block' }}
+          />
+        ) : (
+          /* Fallback elegante quando screenshot falha */
+          <div className="w-full h-full flex flex-col items-center justify-center gap-2 bg-surface-hover">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-text-secondary opacity-50">
+              <rect x="3" y="3" width="18" height="18" rx="2"/>
+              <path d="M3 9h18"/>
+              <circle cx="7" cy="6" r="1" fill="currentColor"/>
+              <circle cx="10" cy="6" r="1" fill="currentColor"/>
+            </svg>
+            <span className="text-[10px] font-mono text-text-secondary opacity-60 truncate max-w-[85%]">{cleanUrl}</span>
+          </div>
+        )}
+        {/* Hover overlay */}
+        <div className="absolute inset-0 bg-black/55 flex flex-col items-center justify-center opacity-0 group-hover/link:opacity-100 transition-opacity">
+          <span className="bg-canvas/90 text-text-primary px-3 py-1.5 rounded-md text-xs font-mono border border-border flex items-center gap-2">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+              <polyline points="15 3 21 3 21 9"/>
+              <line x1="10" y1="14" x2="21" y2="3"/>
+            </svg>
+            Abrir site
+          </span>
+          <span className="text-[9px] text-white/60 mt-1.5 font-mono truncate max-w-[85%]">{cleanUrl}</span>
+        </div>
+      </div>
+    </a>
+  )
+}
 
 // GitHub's language color mapping (most common languages)
 const LANG_COLORS: Record<string, string> = {
@@ -78,39 +132,7 @@ export function ProjectCard({ project, index, onClick }: ProjectCardProps) {
 
       {/* Deploy Image & Link */}
       {project.is_deployed && project.homepage && (
-        <a 
-          href={project.homepage} 
-          target="_blank" 
-          rel="noopener noreferrer"
-          className="block my-2 rounded overflow-hidden border border-border hover:border-accent-blue transition-colors group/link"
-          onClick={(e) => e.stopPropagation()}
-          title={`Visitar deploy na Vercel: ${project.homepage}`}
-        >
-          <div className="relative aspect-[16/9] bg-surface-hover flex items-center justify-center">
-            <img 
-              src={`https://image.thum.io/get/width/500/crop/700/noanimate/${project.homepage}`} 
-              alt={`Preview de ${project.name}`}
-              className="w-full h-full object-cover"
-              loading="lazy"
-              onError={(e) => {
-                e.currentTarget.style.display = 'none';
-              }}
-            />
-            <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center opacity-0 group-hover/link:opacity-100 transition-opacity">
-               <span className="bg-background/90 text-text px-3 py-1.5 rounded text-xs font-mono border border-border flex items-center gap-2">
-                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                   <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-                   <polyline points="15 3 21 3 21 9" />
-                   <line x1="10" y1="14" x2="21" y2="3" />
-                 </svg>
-                 Visitar Vercel
-               </span>
-               <span className="text-[10px] text-text-secondary mt-2 truncate max-w-[90%] font-mono">
-                 {project.homepage.replace(/^https?:\/\//, '')}
-               </span>
-            </div>
-          </div>
-        </a>
+        <DeployPreview homepage={project.homepage} name={project.name} />
       )}
 
       {/* Description */}

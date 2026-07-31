@@ -46,7 +46,7 @@ export function ContactSection() {
           </p>
         </motion.div>
 
-        <div className="grid lg:grid-cols-2 gap-12 items-start">
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
 
           {/* Contact form */}
           <motion.form
@@ -156,9 +156,9 @@ export function ContactSection() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="space-y-4 flex flex-col"
+            className="space-y-6 flex flex-col items-center"
           >
-            <h3 className="text-text-primary font-semibold mb-2">Ou entre em contato diretamente</h3>
+            <h3 className="text-text-primary font-semibold text-center w-full">Ou entre em contato diretamente</h3>
 
             {/* Animated Email */}
             <a href="mailto:jonathanads2006@gmail.com" className="block outline-none self-center my-4 group focus-visible:ring-2 focus-visible:ring-accent-blue rounded-lg">
