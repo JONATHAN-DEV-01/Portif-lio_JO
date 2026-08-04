@@ -50,7 +50,8 @@ export function HeroSection() {
                       src={profile.avatar_url}
                       alt={`Avatar de ${profile.name}`}
                       className="w-16 h-16 rounded-full border-2 border-accent-blue/40 shadow-glow-blue"
-                      loading="lazy"
+                      loading="eager"
+                      fetchPriority="high"
                     />
                   )}
                   <div>

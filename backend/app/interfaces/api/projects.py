@@ -1,6 +1,6 @@
 """FastAPI router for projects endpoints."""
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.application.use_cases.get_project_detail import GetProjectDetailUseCase
@@ -24,6 +24,7 @@ async def list_projects(
     search: str | None = Query(None, description="Search by name or description"),
     sort_by: str = Query("updated", description="Sort by: updated | stars | name"),
     repo: SQLAlchemyProjectRepository = Depends(get_repo),
+    response: Response = None,
 ):
     use_case = ListProjectsUseCase(project_repo=repo)
     projects = await use_case.execute(
@@ -35,6 +36,10 @@ async def list_projects(
 
     # Collect unique languages for filter UI
     languages = sorted(set(p.language for p in projects if p.language))
+
+    # Allow browser/CDN to cache for 5 minutes
+    if response is not None:
+        response.headers["Cache-Control"] = "public, max-age=300"
 
     return ProjectListResponse(
         projects=[_to_response(p) for p in projects],

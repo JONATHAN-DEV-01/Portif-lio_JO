@@ -11,6 +11,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import get_settings
+from app.infrastructure.adapters.github.github_client import close_shared_client
 from app.infrastructure.db.session import init_db
 
 settings = get_settings()
@@ -65,6 +66,7 @@ async def lifespan(app: FastAPI):
     # Shutdown
     if scheduler.running:
         scheduler.shutdown()
+    await close_shared_client()
     logger.info("Portfolio backend stopped.")
 
 
