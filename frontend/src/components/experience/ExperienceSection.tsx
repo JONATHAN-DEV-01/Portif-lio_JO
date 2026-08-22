@@ -4,39 +4,40 @@ interface TimelineItem {
   period: string
   title: string
   company: string
-  description: string
+  bullets: string[]
   type: 'work' | 'education' | 'course'
   current?: boolean
 }
 
 const TIMELINE: TimelineItem[] = [
   {
-    period: '2025 – presente',
-    title: 'Estagiário Desenvolvedor',
-    company: 'Prefeitura de São Paulo (SEGES)',
-    description: 'Desenvolvimento de sistemas internos para a Secretaria de Gestão (SEGES). Aplicando Python, React e boas práticas de engenharia de software no setor público.',
+    period: 'mar. 2026 — presente',
+    title: 'Estagiário de TI',
+    company: 'Prefeitura de São Paulo — SEGES (COPATS)',
+    bullets: [
+      'Atuo na Coordenadoria de Parcerias com o Terceiro Setor (COPATS), integrando competências técnicas de desenvolvimento à gestão estratégica de parcerias municipais.',
+      'Responsável pelo ciclo de vida de soluções web em WordPress/PHP, do levantamento de requisitos à implementação.',
+      'Uso de Python para automação de processos, web scraping e análise de dados; apoio a soluções de IA generativa com RAG.',
+    ],
     type: 'work',
     current: true,
   },
   {
-    period: '2025',
-    title: 'Analista Financeiro / TI',
-    company: 'Telma Multimarcas',
-    description: 'Elaboração de balanços e dashboards interativos de fluxo de caixa. Responsável simultâneo por toda a infraestrutura de TI local — montagem e manutenção de hardware, upgrades de memória, configuração de rede interna de compartilhamento de dados.',
-    type: 'work',
-  },
-  {
-    period: '2023 – 2024',
-    title: 'Jovem Aprendiz',
-    company: 'Spiral do Brasil',
-    description: 'Setor de admissão do RH — integração e cadastro de novos funcionários, confecção de relatórios administrativos com Excel avançado.',
+    period: 'jan. 2026 — abr. 2026',
+    title: 'Estagiário de Desenvolvimento',
+    company: 'Solaris Tech Tecnologia',
+    bullets: [
+      'Desenvolvi interfaces e funcionalidades utilizando React, HTML, CSS, JavaScript e SQL em ambiente remoto.',
+      'Implementei controle de acesso baseado em papéis (RBAC) e participei de decisões de arquitetura de software, do modelo de dados ao processo de deploy.',
+      'Colaborei em ciclos de desenvolvimento ágil, integrando front-end e back-end em soluções orientadas a dados.',
+    ],
     type: 'work',
   },
 ]
 
 const EDUCATION = [
   {
-    period: 'cursando – até 12/2027',
+    period: 'cursando — conclusão prevista 12/2027',
     title: 'Bacharelado em Sistemas de Informação',
     institution: 'Faculdade Impacta',
     type: 'education',
@@ -97,7 +98,7 @@ export function ExperienceSection() {
           {/* Link para download do currículo */}
           <a
             href="/curriculo-jonathan-nascimento.docx"
-            download="curriculo-jonathan-nascimento.docx"
+            download="Jonathan_Nascimento_CV_FullStack.docx"
             className="btn-secondary text-sm shrink-0 self-start sm:self-auto"
             id="download-resume"
           >
@@ -106,7 +107,7 @@ export function ExperienceSection() {
               <polyline points="7 10 12 15 17 10" />
               <line x1="12" y1="15" x2="12" y2="3" />
             </svg>
-            Baixar currículo (.docx)
+            Baixar currículo (PDF)
           </a>
         </motion.div>
 
@@ -150,7 +151,14 @@ export function ExperienceSection() {
                       </div>
                       <h4 className="font-semibold text-text-primary">{item.title}</h4>
                       <p className="text-accent-blue text-sm font-medium mb-2">{item.company}</p>
-                      <p className="text-text-secondary text-sm leading-relaxed">{item.description}</p>
+                      <ul className="mt-2 space-y-1.5 list-none">
+                        {item.bullets.map((b, bi) => (
+                          <li key={bi} className="flex gap-2 text-text-secondary text-sm leading-relaxed">
+                            <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-accent-blue/60 shrink-0" />
+                            {b}
+                          </li>
+                        ))}
+                      </ul>
                     </div>
                   </motion.div>
                 ))}
