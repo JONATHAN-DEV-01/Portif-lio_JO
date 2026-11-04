@@ -10,7 +10,7 @@ export function HeroSection() {
   const { data: profile } = useProfile()
 
   return (
-    <section id="hero" className="flex items-center pt-16 lg:min-h-screen">
+    <section id="hero" className="grid-bg flex items-center pt-16 lg:min-h-screen">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12 lg:py-20 w-full">
         <div className="grid lg:grid-cols-[1.15fr_1fr] gap-10 lg:gap-14 items-center">
 
