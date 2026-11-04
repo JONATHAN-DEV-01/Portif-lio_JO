@@ -46,7 +46,7 @@ export function ProjectFilters({ filters, languages, onChange, total, visible }:
             onClick={() => set({ status: s })}
             className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
               filters.status === s
-                ? 'bg-accent-blue text-white'
+                ? 'bg-accent-blue-strong text-white'
                 : 'text-text-secondary hover:text-text-primary'
             }`}
             id={`filter-status-${s}`}

@@ -23,13 +23,15 @@
    Base Styles
    ============================================================ */
 html {
+  color-scheme: dark;
   scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
 }
 
 body {
   background-color: var(--bg-canvas);
   color: var(--text-primary);
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: 'Geist Variable', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -62,40 +64,35 @@ body {
   .btn-primary {
     @apply inline-flex items-center gap-2 px-5 py-2.5 rounded-lg font-semibold text-sm
            bg-accent-blue-strong text-white
-           hover:bg-accent-blue transition-all duration-200
+           hover:bg-accent-blue transition-colors duration-200
            focus:outline-none focus:ring-2 focus:ring-accent-blue focus:ring-offset-2 focus:ring-offset-canvas;
   }
 
   .btn-secondary {
     @apply inline-flex items-center gap-2 px-5 py-2.5 rounded-lg font-semibold text-sm
            bg-surface border border-border text-text-primary
-           hover:bg-surface-hover hover:border-accent-blue transition-all duration-200
+           hover:bg-surface-hover hover:border-accent-blue transition-colors duration-200
            focus:outline-none focus:ring-2 focus:ring-accent-blue focus:ring-offset-2 focus:ring-offset-canvas;
   }
 
   .btn-ghost {
     @apply inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm
            text-text-secondary hover:text-text-primary hover:bg-surface-hover
-           transition-all duration-200;
+           transition-colors duration-200;
   }
 
   .card {
     @apply bg-surface border border-border rounded-xl
-           shadow-card hover:shadow-card-hover
-           hover:border-accent-blue/30 hover:bg-surface-hover
-           transition-all duration-200;
+           hover:border-accent-blue/40 hover:bg-surface-hover
+           transition-colors duration-200;
   }
 
   .section-title {
-    @apply text-2xl md:text-3xl font-bold text-text-primary mb-2;
+    @apply text-3xl md:text-4xl font-bold tracking-tight text-text-primary mb-3;
   }
 
   .section-subtitle {
     @apply text-text-secondary text-base mb-8;
-  }
-
-  .section-divider {
-    @apply w-12 h-1 bg-accent-blue rounded-full mb-6;
   }
 
   .badge {
@@ -122,14 +119,9 @@ body {
     @apply badge bg-surface text-text-secondary border border-border;
   }
 
-  /* Gradient text */
-  .gradient-text {
-    @apply bg-gradient-to-r from-accent-blue to-accent-purple bg-clip-text text-transparent;
-  }
-
   /* Glass card */
   .glass-card {
-    @apply bg-surface/60 backdrop-blur-sm border border-border/50 rounded-xl;
+    @apply bg-surface border border-border rounded-xl;
   }
 
   /* Terminal */
@@ -232,31 +224,6 @@ body {
 }
 
 /* ============================================================
-   Animated gradient border
-   ============================================================ */
-@keyframes borderRotate {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-.animated-border {
-  background: linear-gradient(270deg, #58A6FF, #A371F7, #3FB950, #58A6FF);
-  background-size: 400% 400%;
-  animation: borderRotate 8s ease infinite;
-}
-
-/* ============================================================
-   Particle / grid background
-   ============================================================ */
-.grid-bg {
-  background-image:
-    linear-gradient(rgba(88, 166, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(88, 166, 255, 0.03) 1px, transparent 1px);
-  background-size: 40px 40px;
-}
-
-/* ============================================================
    Skeleton loading
    ============================================================ */
 .skeleton {
@@ -266,13 +233,26 @@ body {
 /* ============================================================
    Scroll reveal animation
    ============================================================ */
-.reveal {
-  opacity: 0;
-  transform: translateY(24px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
+/* Driven by scroll position, with no JavaScript. Browsers without support show the content as is. */
+@keyframes reveal {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.reveal.visible {
-  opacity: 1;
-  transform: translateY(0);
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .reveal,
+    .section-title {
+      animation: reveal linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 25%;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .animate-fade-in,
+  .animate-modal-in,
+  .animate-pulse { animation: none; }
 }

@@ -8,10 +8,10 @@ export function Footer() {
             <span className="text-accent-blue font-semibold">{'<JN />'}</span>
             {' — '}Jonathan Nascimento
           </div>
-          <p className="text-text-secondary text-xs text-center">
+          <p className="text-text-secondary text-xs text-center" suppressHydrationWarning>
             &copy; {year} · Feito com{' '}
             <span className="text-accent-blue">React</span> +{' '}
-            <span className="text-accent-blue">FastAPI</span> · Dados puxados em tempo real do GitHub
+            <span className="text-accent-blue">FastAPI</span> · Projetos sincronizados com o GitHub
           </p>
           <div className="flex items-center gap-3">
             <a

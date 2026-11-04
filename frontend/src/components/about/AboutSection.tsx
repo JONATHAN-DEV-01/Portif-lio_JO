@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion'
 import { CssDrawer } from '@/components/ui/CssDrawer'
 
 const SKILLS = [
@@ -25,24 +24,14 @@ export function AboutSection() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
 
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
+        <div
         >
-          <p className="text-accent-blue font-mono text-sm mb-2">// sobre mim</p>
           <h2 className="section-title">Sobre mim</h2>
-          <div className="section-divider" />
-        </motion.div>
+        </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-10 mt-8">
           {/* Bio */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.1 }}
+          <div
             className="md:col-span-1 lg:col-span-3"
           >
             <p className="text-text-secondary leading-relaxed mb-6">
@@ -56,17 +45,13 @@ export function AboutSection() {
 
             <ul className="space-y-3">
               {BULLETS.map((b, i) => (
-                <motion.li
+                <li
                   key={i}
-                  initial={{ opacity: 0, x: -12 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.07 }}
                   className="flex items-start gap-3 text-text-secondary text-sm"
                 >
                   <span className="text-lg shrink-0 mt-0.5">{b.icon}</span>
                   <span>{b.text}</span>
-                </motion.li>
+                </li>
               ))}
             </ul>
 
@@ -81,41 +66,17 @@ export function AboutSection() {
             <div className="mt-12">
               <CssDrawer />
             </div>
-          </motion.div>
+          </div>
 
-          {/* Skills grid */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="md:col-span-1 lg:col-span-2 space-y-4 mt-8 md:mt-0"
-          >
-            {SKILLS.map((group, gi) => (
-              <motion.div
-                key={group.category}
-                initial={{ opacity: 0, scale: 0.97 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: gi * 0.08 }}
-                className="glass-card p-4"
-              >
-                <p className="text-xs font-semibold text-text-secondary uppercase tracking-wider mb-2.5">
-                  {group.category}
-                </p>
-                <div className="flex flex-wrap gap-1.5">
-                  {group.items.map(skill => (
-                    <span
-                      key={skill}
-                      className="px-2 py-0.5 rounded text-xs font-mono bg-canvas border border-border text-text-secondary hover:text-accent-blue hover:border-accent-blue/40 transition-colors cursor-default"
-                    >
-                      {skill}
-                    </span>
-                  ))}
-                </div>
-              </motion.div>
+          {/* Skills */}
+          <dl className="md:col-span-1 lg:col-span-2 divide-y divide-border border-y border-border self-start">
+            {SKILLS.map(group => (
+              <div key={group.category} className="py-4">
+                <dt className="text-sm font-semibold text-text-primary mb-1">{group.category}</dt>
+                <dd className="text-sm leading-relaxed text-text-secondary">{group.items.join(', ')}</dd>
+              </div>
             ))}
-          </motion.div>
+          </dl>
         </div>
       </div>
     </section>

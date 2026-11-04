@@ -7,6 +7,7 @@ import json
 
 from sqlalchemy import select, update, delete
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import defer
 
 from app.application.ports.interfaces import ProjectRepositoryPort
 from app.domain.entities import Project, ProjectOverride
@@ -24,9 +25,14 @@ class SQLAlchemyProjectRepository(ProjectRepositoryPort):
         search: str | None = None,
         featured_first: bool = True,
     ) -> list[Project]:
-        stmt = select(ProjectModel, ProjectOverrideModel).outerjoin(
-            ProjectOverrideModel,
-            ProjectModel.name == ProjectOverrideModel.repo_name,
+        # READMEs are only needed on the detail route, so the list does not load them.
+        stmt = (
+            select(ProjectModel, ProjectOverrideModel)
+            .outerjoin(
+                ProjectOverrideModel,
+                ProjectModel.name == ProjectOverrideModel.repo_name,
+            )
+            .options(defer(ProjectModel.readme_content))
         )
 
         result = await self._session.execute(stmt)
@@ -34,7 +40,7 @@ class SQLAlchemyProjectRepository(ProjectRepositoryPort):
 
         projects = []
         for proj_model, override_model in rows:
-            project = self._to_entity(proj_model, override_model)
+            project = self._to_entity(proj_model, override_model, include_readme=False)
 
             # Apply override-based hidden filter
             if project.hidden:
@@ -93,8 +99,21 @@ class SQLAlchemyProjectRepository(ProjectRepositoryPort):
         return project
 
     async def upsert_many(self, projects: list[Project]) -> None:
+        if not projects:
+            return
+
+        stmt = select(ProjectModel).where(ProjectModel.name.in_([p.name for p in projects]))
+        result = await self._session.execute(stmt)
+        existing = {model.name: model for model in result.scalars().all()}
+
         for project in projects:
-            await self.upsert(project)
+            model = existing.get(project.name)
+            if model:
+                self._update_model(model, project)
+            else:
+                self._session.add(self._to_model(project))
+
+        await self._session.commit()
 
     async def get_override(self, repo_name: str) -> ProjectOverride | None:
         stmt = select(ProjectOverrideModel).where(ProjectOverrideModel.repo_name == repo_name)
@@ -146,7 +165,12 @@ class SQLAlchemyProjectRepository(ProjectRepositoryPort):
 
     # ---- mapping helpers ----
 
-    def _to_entity(self, model: ProjectModel, override: ProjectOverrideModel | None) -> Project:
+    def _to_entity(
+        self,
+        model: ProjectModel,
+        override: ProjectOverrideModel | None,
+        include_readme: bool = True,
+    ) -> Project:
         is_deployed = bool(model.homepage)
         deploy_url = model.homepage
 
@@ -185,7 +209,7 @@ class SQLAlchemyProjectRepository(ProjectRepositoryPort):
             archived=model.archived,
             pushed_at=model.pushed_at,
             created_at=model.created_at,
-            readme_content=model.readme_content,
+            readme_content=model.readme_content if include_readme else None,
             is_deployed=is_deployed,
             deploy_url=deploy_url,
             featured=featured,
@@ -218,7 +242,9 @@ class SQLAlchemyProjectRepository(ProjectRepositoryPort):
         model.html_url = project.html_url
         model.homepage = project.homepage
         model.language = project.language
-        model.languages_json = json.dumps(project.languages) if project.languages else None
+        # An empty result can mean GitHub failed, so it must not erase what is already stored.
+        if project.languages:
+            model.languages_json = json.dumps(project.languages)
         model.topics_json = json.dumps(project.topics) if project.topics else None
         model.stargazers_count = project.stargazers_count
         model.forks_count = project.forks_count

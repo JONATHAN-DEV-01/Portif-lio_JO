@@ -90,7 +90,8 @@ Copie `backend/.env.example` para `backend/.env` e preencha:
 | `SECRET_KEY` | Chave secreta JWT (mín. 32 chars) |
 | `ADMIN_USERNAME` | Login do painel `/admin` |
 | `ADMIN_PASSWORD` | Senha do painel `/admin` |
-| `RESEND_API_KEY` | (opcional) Chave da API Resend para e-mails |
+| `RESEND_API_KEY` | Chave da API Resend. Sem ela, o formulário avisa que não enviou e mostra o e-mail direto |
+| `FROM_EMAIL` | Remetente, em um domínio verificado no Resend |
 | `CORS_ORIGINS` | Origens permitidas (ex: `http://localhost:5173`) |
 | `SYNC_INTERVAL_HOURS` | Intervalo do sync automático com GitHub (horas) |
 
@@ -105,7 +106,7 @@ Copie `backend/.env.example` para `backend/.env` e preencha:
 | `GET` | `/api/profile` | Dados do perfil GitHub |
 | `POST` | `/api/sync` | Força resync com GitHub (requer auth) |
 | `POST` | `/api/contact` | Envia mensagem de contato |
-| `POST` | `/api/admin/token` | Login do admin |
+| `POST` | `/api/admin/login` | Login do admin |
 | `GET` | `/api/admin/overrides` | Lista overrides de projetos |
 | `PUT` | `/api/admin/overrides/{name}` | Edita override de um projeto |
 | `GET` | `/health` | Health check |
@@ -137,6 +138,18 @@ Copie `backend/.env.example` para `backend/.env` e preencha:
 
 ---
 
+## ⚡ Desempenho
+
+A página não depende do backend para o primeiro carregamento, porque o serviço gratuito do Render dorme após 15 minutos sem tráfego.
+
+- `npm run build` roda `scripts/sync-content.mjs`, que atualiza `src/data/snapshot.json`, `public/avatar.webp` e as prévias em `public/previews/`. Se algo falhar, o build usa os arquivos versionados.
+- `scripts/prerender.mjs` grava a home em `dist/index.html`: nome, foto e projetos chegam no próprio HTML.
+- No navegador, o React Query parte desses dados e os substitui pela resposta da API assim que ela chega.
+- No backend, `app/core/cache.py` responde as listas da memória e as atualiza em segundo plano. O sync roda depois que a porta já abriu.
+- Para capturar de novo a prévia de um projeto, apague o arquivo em `public/previews/` e rode o build.
+
+---
+
 ## 🧪 Testes
 
 ```bash
@@ -149,7 +162,6 @@ pytest -v
 
 ## 📌 TODO (Jonathan preencher)
 
-- [ ] Adicionar o PDF do currículo em `frontend/public/curriculo-jonathan-nascimento.pdf`
 - [ ] Definir domínio final e atualizar CORS + Open Graph
 - [ ] Configurar Resend API Key para formulário de contato funcionar com e-mail real
 - [ ] Definir quais repositórios ocultar via painel `/admin` → `project_overrides.hide`

@@ -19,16 +19,21 @@ const config: Config = {
         'accent-purple': '#A371F7',
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
-        mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
+        sans: ['Geist Variable', 'system-ui', 'sans-serif'],
+        mono: ['JetBrains Mono Variable', 'ui-monospace', 'monospace'],
       },
       animation: {
-        'fade-in': 'fadeIn 0.5s ease-out',
+        'fade-in': 'fadeIn 0.2s ease-out',
+        'modal-in': 'modalIn 0.2s ease-out',
         'slide-up': 'slideUp 0.5s ease-out',
         'blink': 'blink 1s step-end infinite',
         'float': 'float 6s ease-in-out infinite',
       },
       keyframes: {
+        modalIn: {
+          '0%': { opacity: '0', transform: 'translateY(12px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
         fadeIn: {
           '0%': { opacity: '0' },
           '100%': { opacity: '1' },

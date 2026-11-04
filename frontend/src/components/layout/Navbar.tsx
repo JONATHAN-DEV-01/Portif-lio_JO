@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
 
 const NAV_LINKS = [
   { href: '#sobre', label: 'Sobre' },
@@ -15,7 +14,7 @@ export function Navbar() {
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20)
-    window.addEventListener('scroll', onScroll)
+    window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
@@ -41,12 +40,9 @@ export function Navbar() {
   }
 
   return (
-    <motion.header
-      initial={{ y: -64, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.4, ease: 'easeOut' }}
-      className={`fixed top-0 left-0 right-0 z-30 transition-all duration-300 ${
-        scrolled ? 'bg-surface/90 backdrop-blur-md border-b border-border shadow-lg' : 'bg-transparent'
+    <header
+      className={`fixed top-0 left-0 right-0 z-30 transition-colors duration-200 ${
+        scrolled ? 'bg-surface border-b border-border' : 'bg-transparent border-b border-transparent'
       }`}
     >
       <nav className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
@@ -124,6 +120,6 @@ export function Navbar() {
           ))}
         </div>
       )}
-    </motion.header>
+    </header>
   )
 }

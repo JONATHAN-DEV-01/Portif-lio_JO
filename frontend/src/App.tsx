@@ -1,16 +1,22 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { lazy, Suspense } from 'react'
 import Home from './pages/Home'
-import Admin from './pages/Admin'
+
+const Admin = lazy(() => import('./pages/Admin'))
+
+export function isAdminRoute() {
+  return window.location.pathname.replace(/\/$/, '') === '/admin'
+}
 
 function App() {
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/admin" element={<Admin />} />
-      </Routes>
-    </BrowserRouter>
-  )
+  if (isAdminRoute()) {
+    return (
+      <Suspense fallback={null}>
+        <Admin />
+      </Suspense>
+    )
+  }
+
+  return <Home />
 }
 
 export default App

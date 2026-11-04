@@ -1,31 +1,31 @@
 import { useState } from 'react'
-import { motion } from 'framer-motion'
 import type { Project } from '@/lib/api'
 import { DeployBadge } from '@/components/ui/Badge'
 
-function DeployPreview({ homepage, name }: { homepage: string; name: string }) {
+function DeployPreview({ url, name }: { url: string; name: string }) {
   const [imgError, setImgError] = useState(false)
-  const cleanUrl = homepage.replace(/^https?:\/\//, '')
-  const screenshotUrl = `https://api.microlink.io/?url=${encodeURIComponent(homepage)}&screenshot=true&meta=false&embed=screenshot.url`
+  const cleanUrl = url.replace(/^https?:\/\//, '')
 
   return (
     <a
-      href={homepage}
+      href={url}
       target="_blank"
       rel="noopener noreferrer"
       className="block my-2 rounded-lg overflow-hidden border border-border hover:border-accent-blue transition-colors group/link"
       onClick={(e) => e.stopPropagation()}
-      title={`Visitar: ${homepage}`}
+      title={`Visitar: ${url}`}
     >
       <div className="relative w-full" style={{ aspectRatio: '16/9', minHeight: 120, background: '#0d1117' }}>
         {!imgError ? (
           <img
-            src={screenshotUrl}
-            alt={`Preview de ${name}`}
-            className="w-full h-full object-cover"
+            src={`/previews/${name}.webp`}
+            alt={`Prévia do site de ${name}`}
+            width={640}
+            height={360}
+            className="block w-full h-full object-cover"
             loading="lazy"
+            decoding="async"
             onError={() => setImgError(true)}
-            style={{ display: 'block' }}
           />
         ) : (
           /* Fallback elegante quando screenshot falha */
@@ -78,36 +78,35 @@ function getLangColor(lang: string | null): string {
   return lang ? (LANG_COLORS[lang] ?? '#8B949E') : '#8B949E'
 }
 
-function timeAgo(dateStr: string): string {
-  const date = new Date(dateStr)
-  const now = new Date()
-  const diffMs = now.getTime() - date.getTime()
-  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
+const MONTHS = ['jan.', 'fev.', 'mar.', 'abr.', 'mai.', 'jun.', 'jul.', 'ago.', 'set.', 'out.', 'nov.', 'dez.']
 
-  if (diffDays === 0) return 'hoje'
-  if (diffDays === 1) return 'ontem'
-  if (diffDays < 7) return `${diffDays} dias atrás`
-  if (diffDays < 30) return `${Math.floor(diffDays / 7)} semana(s) atrás`
-  if (diffDays < 365) return `${Math.floor(diffDays / 30)} mês(es) atrás`
-  return `${Math.floor(diffDays / 365)} ano(s) atrás`
+// An absolute date stays correct in prerendered HTML, unlike "3 days ago".
+function formatUpdatedAt(dateStr: string | null): string {
+  if (!dateStr) return ''
+  const date = new Date(dateStr)
+  return `${MONTHS[date.getUTCMonth()]} ${date.getUTCFullYear()}`
 }
 
 interface ProjectCardProps {
   project: Project
-  index: number
   onClick: () => void
+  onIntent: () => void
 }
 
-export function ProjectCard({ project, index, onClick }: ProjectCardProps) {
+export function ProjectCard({ project, onClick, onIntent }: ProjectCardProps) {
   return (
-    <motion.article
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.05, duration: 0.35 }}
-      className="card p-5 flex flex-col gap-3 cursor-pointer group h-full"
+    <article
+      className="card reveal p-5 flex flex-col gap-3 cursor-pointer group h-full"
       onClick={onClick}
+      onPointerEnter={onIntent}
+      onFocus={onIntent}
       tabIndex={0}
-      onKeyDown={e => e.key === 'Enter' && onClick()}
+      onKeyDown={e => {
+        if (e.target === e.currentTarget && (e.key === 'Enter' || e.key === ' ')) {
+          e.preventDefault()
+          onClick()
+        }
+      }}
       role="button"
       aria-label={`Ver detalhes de ${project.name}`}
     >
@@ -122,7 +121,7 @@ export function ProjectCard({ project, index, onClick }: ProjectCardProps) {
             {project.name}
           </span>
         </div>
-        {project.is_featured && (
+        {project.featured && (
           <span title="Projeto em destaque" className="text-accent-orange shrink-0">⭐</span>
         )}
       </div>
@@ -131,8 +130,8 @@ export function ProjectCard({ project, index, onClick }: ProjectCardProps) {
       <DeployBadge isDeployed={project.is_deployed} />
 
       {/* Deploy Image & Link */}
-      {project.is_deployed && project.homepage && (
-        <DeployPreview homepage={project.homepage} name={project.name} />
+      {project.is_deployed && project.deploy_url && (
+        <DeployPreview url={project.deploy_url} name={project.name} />
       )}
 
       {/* Description */}
@@ -181,9 +180,9 @@ export function ProjectCard({ project, index, onClick }: ProjectCardProps) {
               {project.stargazers_count}
             </span>
           )}
-          <span>{timeAgo(project.pushed_at)}</span>
+          <span>{formatUpdatedAt(project.pushed_at)}</span>
         </div>
       </div>
-    </motion.article>
+    </article>
   )
 }

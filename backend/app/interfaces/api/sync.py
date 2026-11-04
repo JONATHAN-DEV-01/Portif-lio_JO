@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.application.use_cases.sync_github import SyncGitHubUseCase
+from app.core.cache import projects_cache
 from app.core.deps import require_admin
 from app.infrastructure.adapters.db.project_repository import SQLAlchemyProjectRepository
 from app.infrastructure.adapters.github.github_client import GitHubHttpxClient
@@ -24,6 +25,7 @@ async def sync_github(
 
     use_case = SyncGitHubUseCase(project_repo=repo, github_client=github)
     result = await use_case.execute()
+    projects_cache.invalidate()
 
     return SyncResponse(
         synced=result["synced"],

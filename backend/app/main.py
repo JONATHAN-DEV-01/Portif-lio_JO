@@ -3,6 +3,7 @@ FastAPI application entrypoint.
 Configures CORS, includes all routers, and sets up the APScheduler for GitHub sync.
 """
 
+import asyncio
 import logging
 from contextlib import asynccontextmanager
 
@@ -10,9 +11,12 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.core.cache import projects_cache
 from app.core.config import get_settings
 from app.infrastructure.adapters.github.github_client import close_shared_client
 from app.infrastructure.db.session import init_db
+
+logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
 
 settings = get_settings()
 logger = logging.getLogger(__name__)
@@ -34,6 +38,37 @@ async def _run_scheduled_sync():
         use_case = SyncGitHubUseCase(project_repo=repo, github_client=github)
         result = await use_case.execute()
         logger.info(f"Scheduled sync result: {result}")
+    projects_cache.invalidate()
+
+
+async def _startup_tasks():
+    """
+    Prepares the app without holding up the port: Render only routes traffic after uvicorn
+    finishes its startup, so waiting here would make every cold start even longer.
+    """
+    from app.interfaces.api.profile import warm_profile_cache
+    from app.interfaces.api.projects import load_all_projects
+
+    try:
+        await init_db()
+    except Exception as e:
+        logger.error(f"Database initialisation failed: {e}")
+        return
+
+    results = await asyncio.gather(
+        projects_cache.refresh(load_all_projects),
+        warm_profile_cache(),
+        return_exceptions=True,
+    )
+    for result in results:
+        if isinstance(result, Exception):
+            logger.warning(f"Could not warm cache on startup: {result}")
+
+    try:
+        await _run_scheduled_sync()
+        await projects_cache.refresh(load_all_projects)
+    except Exception as e:
+        logger.warning(f"Initial sync failed (this is OK on first run): {e}")
 
 
 @asynccontextmanager
@@ -41,14 +76,8 @@ async def lifespan(app: FastAPI):
     # Startup
     logger.info("Starting portfolio backend...")
 
-    # Create tables (dev mode — use Alembic in production)
-    await init_db()
-
-    # Run initial sync
-    try:
-        await _run_scheduled_sync()
-    except Exception as e:
-        logger.warning(f"Initial sync failed (this is OK on first run): {e}")
+    # Create tables, warm caches and sync in the background
+    startup_task = asyncio.create_task(_startup_tasks())
 
     # Schedule recurring sync
     if settings.sync_interval_hours > 0:
@@ -64,6 +93,7 @@ async def lifespan(app: FastAPI):
     yield
 
     # Shutdown
+    startup_task.cancel()
     if scheduler.running:
         scheduler.shutdown()
     await close_shared_client()

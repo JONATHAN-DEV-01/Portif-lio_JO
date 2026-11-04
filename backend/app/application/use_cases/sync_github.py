@@ -3,6 +3,7 @@ Use case: Sync projects from GitHub API into the local database.
 This is called by the scheduler or the /api/sync admin endpoint.
 """
 
+import asyncio
 import logging
 from datetime import datetime
 
@@ -10,6 +11,8 @@ from app.application.ports.interfaces import GitHubClientPort, ProjectRepository
 from app.domain.entities import GitHubProfile, Project
 
 logger = logging.getLogger(__name__)
+
+MAX_CONCURRENT_GITHUB_REQUESTS = 5
 
 
 class SyncGitHubUseCase:
@@ -36,23 +39,31 @@ class SyncGitHubUseCase:
             logger.error(f"Failed to fetch repos from GitHub: {e}")
             return {"synced": 0, "errors": 1, "error": str(e)}
 
-        projects: list[Project] = []
-        for raw in raw_repos:
+        semaphore = asyncio.Semaphore(MAX_CONCURRENT_GITHUB_REQUESTS)
+
+        async def build_project(raw: dict) -> Project:
+            project = self._map_raw_to_project(raw)
+            # Languages are optional: a failure here must not drop the whole repository.
             try:
-                project = self._map_raw_to_project(raw)
-
-                # Fetch languages for each repo (with error tolerance)
-                try:
-                    langs = await self._github.get_languages(raw["name"])
-                    project.languages = langs
-                except Exception as e:
-                    logger.warning(f"Could not fetch languages for {raw['name']}: {e}")
-
-                projects.append(project)
-                synced += 1
+                async with semaphore:
+                    project.languages = await self._github.get_languages(raw["name"])
             except Exception as e:
-                logger.error(f"Error processing repo {raw.get('name', '?')}: {e}")
+                logger.warning(f"Could not fetch languages for {raw['name']}: {e}")
+            return project
+
+        results = await asyncio.gather(
+            *(build_project(raw) for raw in raw_repos),
+            return_exceptions=True,
+        )
+
+        projects: list[Project] = []
+        for raw, result in zip(raw_repos, results):
+            if isinstance(result, Exception):
+                logger.error(f"Error processing repo {raw.get('name', '?')}: {result}")
                 errors += 1
+            else:
+                projects.append(result)
+                synced += 1
 
         await self._repo.upsert_many(projects)
         logger.info(f"GitHub sync complete. synced={synced}, errors={errors}")

@@ -7,7 +7,7 @@ interface TerminalLine {
 }
 
 const SEQUENCE: TerminalLine[] = [
-  { type: 'command', text: 'whoami', delay: 800 },
+  { type: 'command', text: 'whoami', delay: 400 },
   { type: 'output', text: 'jonathan-nascimento — dev fullstack | python & react', delay: 400 },
   { type: 'command', text: 'cat sobre.txt', delay: 1200 },
   { type: 'output', text: '> Estagiário Dev @ Prefeitura de SP (SEGES)', delay: 200 },
@@ -30,41 +30,50 @@ export function TerminalTyping() {
   useEffect(() => {
     if (currentLineIndex >= SEQUENCE.length) return
 
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setLines(SEQUENCE)
+      setCurrentLineIndex(SEQUENCE.length)
+      return
+    }
+
     const line = SEQUENCE[currentLineIndex]
-    const delay = line.delay ?? 600
+    let typeTimer: ReturnType<typeof setInterval> | undefined
 
-    // Wait before starting next line
+    const finishLine = () => {
+      setLines(prev => [...prev, line])
+      setCurrentLineIndex(i => i + 1)
+    }
+
     const waitTimer = setTimeout(() => {
-      if (line.type === 'command') {
-        // Type character by character
-        setIsTyping(true)
-        let charIndex = 0
-        setCurrentText('')
-
-        const typeTimer = setInterval(() => {
-          charIndex++
-          setCurrentText(line.text.slice(0, charIndex))
-          if (charIndex >= line.text.length) {
-            clearInterval(typeTimer)
-            setIsTyping(false)
-            setLines(prev => [...prev, line])
-            setCurrentText('')
-            setCurrentLineIndex(i => i + 1)
-          }
-        }, 45)
-
-        return () => clearInterval(typeTimer)
-      } else {
-        // Output lines appear instantly
-        setLines(prev => [...prev, line])
-        setCurrentLineIndex(i => i + 1)
+      if (line.type === 'output') {
+        finishLine()
+        return
       }
-    }, delay)
 
-    return () => clearTimeout(waitTimer)
+      // Commands are typed character by character
+      let charIndex = 0
+      setIsTyping(true)
+      setCurrentText('')
+
+      typeTimer = setInterval(() => {
+        charIndex++
+        setCurrentText(line.text.slice(0, charIndex))
+        if (charIndex >= line.text.length) {
+          clearInterval(typeTimer)
+          setIsTyping(false)
+          setCurrentText('')
+          finishLine()
+        }
+      }, 45)
+    }, line.delay ?? 600)
+
+    return () => {
+      clearTimeout(waitTimer)
+      clearInterval(typeTimer)
+    }
   }, [currentLineIndex])
 
-  // Auto-scroll
+  // Keep the latest line visible inside the fixed height
   useEffect(() => {
     if (containerRef.current) {
       containerRef.current.scrollTop = containerRef.current.scrollHeight
@@ -74,24 +83,24 @@ export function TerminalTyping() {
   return (
     <div className="terminal w-full max-w-lg">
       {/* Terminal title bar */}
-      <div className="flex items-center gap-1.5 mb-4 -mt-1">
+      <div className="flex items-center gap-1.5 mb-4 -mt-1" aria-hidden="true">
         <div className="w-3 h-3 rounded-full bg-red-500/80" />
         <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
         <div className="w-3 h-3 rounded-full bg-green-500/80" />
         <span className="ml-2 text-text-secondary text-xs">bash — jonathan@portfolio</span>
       </div>
 
-      {/* Lines container */}
-      <div ref={containerRef} className="space-y-1 max-h-48 overflow-hidden">
+      {/* The height is fixed so typing never moves the rest of the page */}
+      <div ref={containerRef} className="space-y-1 h-64 overflow-hidden">
         {lines.map((line, i) => (
           <div key={i} className="terminal-line">
             {line.type === 'command' ? (
               <>
                 <span className="terminal-prompt shrink-0">$</span>
-                <span className="terminal-output break-words break-all">{line.text}</span>
+                <span className="terminal-output break-words min-w-0">{line.text}</span>
               </>
             ) : (
-              <span className="text-text-secondary pl-4 break-words break-all">{line.text}</span>
+              <span className="text-text-secondary pl-4 break-words min-w-0">{line.text}</span>
             )}
           </div>
         ))}
@@ -100,7 +109,7 @@ export function TerminalTyping() {
         {isTyping && (
           <div className="terminal-line">
             <span className="terminal-prompt shrink-0">$</span>
-            <span className="terminal-output break-words break-all">
+            <span className="terminal-output break-words min-w-0">
               {currentText}
               <span className="animate-blink">▋</span>
             </span>

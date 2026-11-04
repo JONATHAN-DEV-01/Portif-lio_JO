@@ -1,22 +1,24 @@
 import React from 'react'
-import ReactDOM from 'react-dom/client'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import App from './App'
+import { createRoot, hydrateRoot } from 'react-dom/client'
+import { QueryClientProvider } from '@tanstack/react-query'
+import '@fontsource-variable/geist/wght.css'
+import '@fontsource-variable/jetbrains-mono/wght.css'
+import App, { isAdminRoute } from './App'
+import { createQueryClient } from './lib/queryClient'
 import './index.css'
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 1000 * 60 * 5, // 5 minutes
-      retry: 2,
-    },
-  },
-})
-
-ReactDOM.createRoot(document.getElementById('root')!).render(
+const container = document.getElementById('root')!
+const app = (
   <React.StrictMode>
-    <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={createQueryClient()}>
       <App />
     </QueryClientProvider>
-  </React.StrictMode>,
+  </React.StrictMode>
 )
+
+// The production home page arrives prerendered. /admin and the dev server start from scratch.
+if (container.hasChildNodes() && !isAdminRoute()) {
+  hydrateRoot(container, app)
+} else {
+  createRoot(container).render(app)
+}

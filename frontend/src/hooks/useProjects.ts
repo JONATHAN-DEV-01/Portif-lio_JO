@@ -1,17 +1,27 @@
 import { useQuery } from '@tanstack/react-query'
 import api, { type Project } from '@/lib/api'
+import snapshot from '@/data/snapshot.json'
 
 export function useProjects() {
   return useQuery<Project[], Error>({
     queryKey: ['projects'],
     queryFn: api.getProjects,
+    // Shown immediately and replaced as soon as the API answers.
+    initialData: snapshot.projects as unknown as Project[],
+    initialDataUpdatedAt: 0,
   })
+}
+
+export function projectDetailQuery(name: string) {
+  return {
+    queryKey: ['projects', name],
+    queryFn: () => api.getProject(name),
+  }
 }
 
 export function useProject(name: string) {
   return useQuery({
-    queryKey: ['projects', name],
-    queryFn: () => api.getProject(name),
+    ...projectDetailQuery(name),
     enabled: Boolean(name),
   })
 }

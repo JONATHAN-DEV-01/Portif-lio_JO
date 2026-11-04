@@ -41,7 +41,7 @@ def get_shared_client() -> httpx.AsyncClient:
         _shared_client = httpx.AsyncClient(
             base_url=settings.github_api_base,
             headers=_build_headers(),
-            timeout=30.0,
+            timeout=10.0,
             # Keep connections alive between requests
             limits=httpx.Limits(
                 max_connections=10,
@@ -70,11 +70,24 @@ class GitHubHttpxClient(GitHubClientPort):
     def _client(self) -> httpx.AsyncClient:
         return get_shared_client()
 
+    async def _get(self, path: str, **kwargs) -> httpx.Response:
+        """GET that keeps working on public data if the configured token stops being valid."""
+        client = self._client
+        resp = await client.get(path, **kwargs)
+        if resp.status_code == 401 and "Authorization" in client.headers:
+            logger.error(
+                "GitHub rejected GITHUB_TOKEN (401). Replace it in the environment variables. "
+                "Continuing without a token, limited to 60 requests per hour."
+            )
+            del client.headers["Authorization"]
+            resp = await client.get(path, **kwargs)
+        return resp
+
     async def get_repos(self) -> list[dict]:
         all_repos = []
         page = 1
         while True:
-            resp = await self._client.get(
+            resp = await self._get(
                 f"/users/{self._username}/repos",
                 params={"per_page": 100, "sort": "updated", "page": page},
             )
@@ -90,7 +103,7 @@ class GitHubHttpxClient(GitHubClientPort):
 
     async def get_repo(self, repo_name: str) -> dict | None:
         try:
-            resp = await self._client.get(f"/repos/{self._username}/{repo_name}")
+            resp = await self._get(f"/repos/{self._username}/{repo_name}")
             if resp.status_code == 404:
                 return None
             resp.raise_for_status()
@@ -101,7 +114,7 @@ class GitHubHttpxClient(GitHubClientPort):
 
     async def get_languages(self, repo_name: str) -> dict[str, int]:
         try:
-            resp = await self._client.get(f"/repos/{self._username}/{repo_name}/languages")
+            resp = await self._get(f"/repos/{self._username}/{repo_name}/languages")
             if resp.status_code == 404:
                 return {}
             resp.raise_for_status()
@@ -112,7 +125,7 @@ class GitHubHttpxClient(GitHubClientPort):
 
     async def get_readme(self, repo_name: str) -> str | None:
         try:
-            resp = await self._client.get(f"/repos/{self._username}/{repo_name}/readme")
+            resp = await self._get(f"/repos/{self._username}/{repo_name}/readme")
             if resp.status_code == 404:
                 return None
             resp.raise_for_status()
@@ -127,7 +140,8 @@ class GitHubHttpxClient(GitHubClientPort):
 
     async def get_profile(self) -> dict | None:
         try:
-            resp = await self._client.get(f"/users/{self._username}")
+            # Runs inside a visitor's request when nothing is cached yet, so it must fail fast.
+            resp = await self._get(f"/users/{self._username}", timeout=5.0)
             resp.raise_for_status()
             return resp.json()
         except Exception as e:

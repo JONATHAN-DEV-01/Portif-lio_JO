@@ -32,7 +32,7 @@ class SendContactMessageUseCase:
             if sent:
                 return {"success": True, "message": "Mensagem enviada com sucesso!"}
             else:
-                return {"success": False, "error": "Falha ao enviar mensagem. Tente novamente."}
+                return {"success": False, "error": "Não foi possível enviar a mensagem agora."}
         except Exception as e:
             logger.error(f"Error sending contact message: {e}")
-            return {"success": False, "error": "Erro interno. Tente novamente mais tarde."}
+            return {"success": False, "error": "Não foi possível enviar a mensagem agora."}

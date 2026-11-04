@@ -3,6 +3,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.cache import projects_cache
 from app.core.deps import require_admin
 from app.core.security import create_access_token, verify_admin_credentials
 from app.domain.entities import ProjectOverride
@@ -69,6 +70,7 @@ async def upsert_override(
         hidden=body.hidden,
     )
     saved = await repo.upsert_override(override)
+    projects_cache.invalidate()
     return ProjectOverrideResponse(
         repo_name=saved.repo_name,
         custom_status=saved.custom_status,
@@ -88,6 +90,7 @@ async def delete_override(
 ):
     repo = SQLAlchemyProjectRepository(session)
     deleted = await repo.delete_override(repo_name)
+    projects_cache.invalidate()
     if not deleted:
         raise HTTPException(status_code=404, detail="Override não encontrado.")
     return {"message": f"Override para '{repo_name}' removido com sucesso."}

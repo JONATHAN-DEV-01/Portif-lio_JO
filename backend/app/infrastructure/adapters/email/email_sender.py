@@ -1,9 +1,10 @@
 """
 Email sender adapter.
-Uses Resend if RESEND_API_KEY is configured, otherwise logs only (for dev).
-The mailto: behavior is handled at the frontend level.
+Sends through Resend. Without RESEND_API_KEY the message cannot be delivered, so it reports
+failure and the frontend offers the direct e-mail address instead.
 """
 
+import html
 import logging
 
 import httpx
@@ -20,10 +21,8 @@ class ResendEmailAdapter(EmailSenderPort):
 
     async def send_contact_message(self, name: str, email: str, message: str) -> bool:
         if not settings.resend_api_key:
-            logger.info(
-                f"[DEV MODE] Contact message from {name} <{email}>:\n{message}"
-            )
-            return True  # In dev/no-key mode, we pretend it succeeded
+            logger.error("Contact message not sent: RESEND_API_KEY is not configured.")
+            return False
 
         try:
             async with httpx.AsyncClient() as client:
@@ -40,10 +39,10 @@ class ResendEmailAdapter(EmailSenderPort):
                         "subject": f"[Portfólio] Mensagem de {name}",
                         "html": f"""
                         <h2>Nova mensagem do portfólio</h2>
-                        <p><strong>Nome:</strong> {name}</p>
-                        <p><strong>E-mail:</strong> {email}</p>
+                        <p><strong>Nome:</strong> {html.escape(name)}</p>
+                        <p><strong>E-mail:</strong> {html.escape(email)}</p>
                         <p><strong>Mensagem:</strong></p>
-                        <p>{message.replace(chr(10), '<br>')}</p>
+                        <p>{html.escape(message).replace(chr(10), '<br>')}</p>
                         """,
                     },
                 )

@@ -2,10 +2,10 @@ import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { Modal } from '@/components/ui/Modal'
 import { DeployBadge } from '@/components/ui/Badge'
-import { useProject } from '@/hooks/useProjects'
+import { useProject, useProjects } from '@/hooks/useProjects'
 
 interface ProjectModalProps {
-  repoName: string | null
+  repoName: string
   onClose: () => void
 }
 
@@ -54,26 +54,13 @@ function LanguageBar({ languages }: { languages: Record<string, number> }) {
 }
 
 export function ProjectModal({ repoName, onClose }: ProjectModalProps) {
-  const { data: project, isLoading, isError } = useProject(repoName ?? '')
+  const { data: detail, isPending, isError, refetch } = useProject(repoName)
+  const { data: projects } = useProjects()
+  // The list already has everything except the README, so it can be shown right away.
+  const project = detail ?? projects.find(p => p.name === repoName)
 
   return (
-    <Modal open={Boolean(repoName)} onClose={onClose} title={repoName ?? ''}>
-      {isLoading && (
-        <div className="space-y-3 animate-pulse">
-          <div className="skeleton h-5 w-32 rounded" />
-          <div className="skeleton h-3 w-full rounded" />
-          <div className="skeleton h-3 w-4/5 rounded" />
-          <div className="skeleton h-24 w-full rounded mt-4" />
-        </div>
-      )}
-
-      {isError && (
-        <div className="text-center py-10 text-text-secondary">
-          <p className="text-4xl mb-3">⚠️</p>
-          <p>Não foi possível carregar os detalhes deste repositório.</p>
-        </div>
-      )}
-
+    <Modal open onClose={onClose} title={repoName}>
       {project && (
         <div>
           {/* Meta */}
@@ -124,9 +111,9 @@ export function ProjectModal({ repoName, onClose }: ProjectModalProps) {
               Ver no GitHub
             </a>
 
-            {project.is_deployed && project.homepage && (
+            {project.is_deployed && project.deploy_url && (
               <a
-                href={project.homepage}
+                href={project.deploy_url}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn-primary text-sm"
@@ -146,14 +133,33 @@ export function ProjectModal({ repoName, onClose }: ProjectModalProps) {
           <div className="border-t border-border my-4" />
 
           {/* README */}
-          {project.readme_html ? (
+          {detail?.readme_content ? (
             <div className="markdown-body">
-              <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                {atob(project.readme_html)}
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                components={{
+                  img: ({ node: _node, ...props }) => <img {...props} loading="lazy" decoding="async" />,
+                }}
+              >
+                {detail.readme_content}
               </ReactMarkdown>
             </div>
+          ) : isPending ? (
+            <div className="space-y-3 py-2" role="status">
+              <p className="text-text-secondary text-sm">
+                Carregando o README. Se o servidor estiver em repouso, isso pode levar até um minuto.
+              </p>
+              <div className="skeleton h-3 w-full rounded" />
+              <div className="skeleton h-3 w-4/5 rounded" />
+              <div className="skeleton h-3 w-2/3 rounded" />
+            </div>
+          ) : isError ? (
+            <div className="text-center py-6">
+              <p className="text-text-secondary text-sm mb-3">O README não carregou. Tente de novo ou abra o repositório no GitHub.</p>
+              <button onClick={() => refetch()} className="btn-secondary text-sm">Tentar de novo</button>
+            </div>
           ) : (
-            <p className="text-text-secondary text-sm text-center py-6">README não disponível para este repositório.</p>
+            <p className="text-text-secondary text-sm text-center py-6">Este repositório não tem README.</p>
           )}
         </div>
       )}

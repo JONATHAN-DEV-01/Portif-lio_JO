@@ -1,5 +1,4 @@
 import { useState, type FormEvent } from 'react'
-import { motion } from 'framer-motion'
 import { useMutation } from '@tanstack/react-query'
 import api, { type ContactPayload } from '@/lib/api'
 import './AnimatedMail.css'
@@ -34,28 +33,18 @@ export function ContactSection() {
           {/* Left column: header + form */}
           <div>
             {/* Header */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
+            <div
               className="mb-12"
             >
-              <p className="text-accent-blue font-mono text-sm mb-2">// contato</p>
               <h2 className="section-title">Vamos conversar?</h2>
-              <div className="section-divider" />
               <p className="text-text-secondary max-w-xl">
                 Estou aberto a oportunidades, colaborações e projetos interessantes.
                 Me envie uma mensagem — responderei em breve!
               </p>
-            </motion.div>
+            </div>
 
           {/* Contact form */}
-          <motion.form
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
+          <form
             onSubmit={handleSubmit}
             className="space-y-4"
             noValidate
@@ -107,23 +96,23 @@ export function ContactSection() {
 
             {/* Success message */}
             {success && (
-              <motion.div
-                initial={{ opacity: 0, y: -8 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="flex items-center gap-2 text-accent-green text-sm bg-accent-green/10 border border-accent-green/20 rounded-lg px-4 py-3"
+              <div
+                className="animate-fade-in flex items-center gap-2 text-accent-green text-sm bg-accent-green/10 border border-accent-green/20 rounded-lg px-4 py-3"
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
                   <polyline points="22 4 12 14.01 9 11.01" />
                 </svg>
                 Mensagem enviada com sucesso! Retornarei em breve.
-              </motion.div>
+              </div>
             )}
 
             {/* Error message */}
             {isError && (
-              <p className="text-red-400 text-sm bg-red-400/10 border border-red-400/20 rounded-lg px-4 py-3">
-                {error instanceof Error ? error.message : 'Erro ao enviar mensagem. Tente novamente.'}
+              <p role="alert" className="text-red-400 text-sm bg-red-400/10 border border-red-400/20 rounded-lg px-4 py-3">
+                {error instanceof Error ? error.message : 'Não foi possível enviar a mensagem agora.'}{' '}
+                Você também pode escrever para{' '}
+                <a href="mailto:jonathanads2006@gmail.com" className="underline">jonathanads2006@gmail.com</a>.
               </p>
             )}
 
@@ -150,15 +139,11 @@ export function ContactSection() {
                 </>
               )}
             </button>
-          </motion.form>
+          </form>
           </div>{/* end left column */}
 
           {/* Contact info */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.1 }}
+          <div
             className="flex flex-col justify-between h-full gap-6"
           >
             <h3 className="text-text-primary font-semibold">Ou entre em contato diretamente</h3>
@@ -232,7 +217,7 @@ export function ContactSection() {
               </svg>
               São Paulo, SP — Brasil
             </div>
-          </motion.div>
+          </div>
         </div>
       </div>
     </section>

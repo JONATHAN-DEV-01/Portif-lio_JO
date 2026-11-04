@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion'
 
 interface TimelineItem {
   period: string
@@ -83,17 +82,11 @@ export function ExperienceSection() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
 
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
+        <div
           className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10"
         >
           <div>
-            <p className="text-accent-blue font-mono text-sm mb-2">// experiência & formação</p>
             <h2 className="section-title">Experiência & Formação</h2>
-            <div className="section-divider" />
           </div>
           {/* Link para download do currículo */}
           <a
@@ -107,16 +100,15 @@ export function ExperienceSection() {
               <polyline points="7 10 12 15 17 10" />
               <line x1="12" y1="15" x2="12" y2="3" />
             </svg>
-            Baixar currículo (PDF)
+            Baixar currículo (.docx)
           </a>
-        </motion.div>
+        </div>
 
         <div className="grid md:grid-cols-3 gap-8 lg:gap-10">
 
           {/* Timeline — Experiência profissional */}
           <div className="md:col-span-2">
-            <h3 className="text-text-secondary text-xs font-semibold uppercase tracking-widest mb-6 flex items-center gap-2">
-              <span className="w-4 h-px bg-accent-blue" />
+            <h3 className="text-text-primary text-base font-semibold mb-6">
               Experiência profissional
             </h3>
 
@@ -126,13 +118,9 @@ export function ExperienceSection() {
 
               <div className="space-y-8">
                 {TIMELINE.map((item, i) => (
-                  <motion.div
+                  <div
                     key={i}
-                    initial={{ opacity: 0, x: -16 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: i * 0.1 }}
-                    className="relative pl-10"
+                    className="reveal relative pl-10"
                   >
                     {/* Dot */}
                     <div className={`absolute left-0 top-1.5 w-6 h-6 rounded-full flex items-center justify-center
@@ -160,7 +148,7 @@ export function ExperienceSection() {
                         ))}
                       </ul>
                     </div>
-                  </motion.div>
+                  </div>
                 ))}
               </div>
             </div>
@@ -170,14 +158,9 @@ export function ExperienceSection() {
           <div className="space-y-8">
 
             {/* Formação */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.15 }}
+            <div
             >
-              <h3 className="text-text-secondary text-xs font-semibold uppercase tracking-widest mb-4 flex items-center gap-2">
-                <span className="w-4 h-px bg-accent-purple" />
+              <h3 className="text-text-primary text-base font-semibold mb-4">
                 Formação acadêmica
               </h3>
 
@@ -188,28 +171,19 @@ export function ExperienceSection() {
                   <p className="text-accent-purple text-sm font-medium">{edu.institution}</p>
                 </div>
               ))}
-            </motion.div>
+            </div>
 
             {/* Cursos */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.25 }}
+            <div
             >
-              <h3 className="text-text-secondary text-xs font-semibold uppercase tracking-widest mb-4 flex items-center gap-2">
-                <span className="w-4 h-px bg-accent-green" />
+              <h3 className="text-text-primary text-base font-semibold mb-4">
                 Cursos & Certificações
               </h3>
 
               <div className="space-y-3">
                 {COURSES.map((course, i) => (
-                  <motion.div
+                  <div
                     key={i}
-                    initial={{ opacity: 0, x: 12 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: i * 0.07 }}
                     className="glass-card p-3 hover:border-accent-green/30 transition-colors"
                   >
                     <div className="flex items-start justify-between gap-2">
@@ -222,10 +196,10 @@ export function ExperienceSection() {
                         <p className="text-text-secondary text-xs mt-1">{course.hours}</p>
                       </div>
                     </div>
-                  </motion.div>
+                  </div>
                 ))}
               </div>
-            </motion.div>
+            </div>
 
           </div>
         </div>

@@ -1,7 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-
-const BASE = '/api'
+import { BASE_URL as BASE } from '@/lib/api'
 
 async function login(username: string, password: string) {
   const res = await fetch(`${BASE}/admin/login`, {
@@ -9,7 +8,8 @@ async function login(username: string, password: string) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ username, password }),
   })
-  if (!res.ok) throw new Error('Credenciais inválidas')
+  if (res.status === 401) throw new Error('Usuário ou senha incorretos.')
+  if (!res.ok) throw new Error(`O servidor respondeu com erro ${res.status}. Tente de novo.`)
   return res.json()
 }
 
@@ -27,7 +27,7 @@ interface Override {
   custom_url: string | null
   featured: boolean
   display_order: number
-  hide: boolean
+  hidden: boolean
 }
 
 export default function Admin() {
@@ -52,7 +52,8 @@ export default function Admin() {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
       })
-      return res.json()
+      if (!res.ok) throw new Error(`A sincronização falhou com erro ${res.status}.`)
+      return res.json() as Promise<{ message: string; errors: number }>
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ['projects'] }),
   })
@@ -139,7 +140,17 @@ export default function Admin() {
         </div>
 
         {syncMutation.isSuccess && (
-          <p className="text-accent-green text-sm mb-4">✅ Sincronização concluída!</p>
+          <p className={`text-sm mb-4 ${syncMutation.data.errors > 0 ? 'text-accent-orange' : 'text-accent-green'}`}>
+            {syncMutation.data.message}
+          </p>
+        )}
+
+        {syncMutation.isError && (
+          <p role="alert" className="text-red-400 text-sm mb-4">{syncMutation.error.message}</p>
+        )}
+
+        {overridesQuery.isError && (
+          <p role="alert" className="text-red-400 text-sm mb-4">Não foi possível carregar os overrides. Saia e entre de novo.</p>
         )}
 
         {overridesQuery.isLoading && <p className="text-text-secondary">Carregando overrides...</p>}
@@ -165,7 +176,7 @@ export default function Admin() {
                       {ov.custom_url ?? '—'}
                     </td>
                     <td className="px-4 py-3 text-center">{ov.featured ? '⭐' : '—'}</td>
-                    <td className="px-4 py-3 text-center">{ov.hide ? '🚫' : '—'}</td>
+                    <td className="px-4 py-3 text-center">{ov.hidden ? '🚫' : '—'}</td>
                   </tr>
                 ))}
               </tbody>
