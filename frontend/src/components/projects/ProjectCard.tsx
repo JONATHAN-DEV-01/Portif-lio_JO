@@ -72,6 +72,7 @@ const LANG_COLORS: Record<string, string> = {
   Ruby: '#701516',
   Shell: '#89e051',
   Vue: '#41b883',
+  Markdown: '#083fa1',
 }
 
 function getLangColor(lang: string | null): string {
@@ -127,7 +128,7 @@ export function ProjectCard({ project, onClick, onIntent }: ProjectCardProps) {
       </div>
 
       {/* Deploy badge */}
-      <DeployBadge isDeployed={project.is_deployed} />
+      <DeployBadge status={project.status ?? 'not_deployed'} />
 
       {/* Deploy Image & Link */}
       {project.is_deployed && project.deploy_url && (
@@ -174,13 +175,19 @@ export function ProjectCard({ project, onClick, onIntent }: ProjectCardProps) {
         <div className="flex items-center gap-3">
           {project.stargazers_count > 0 && (
             <span className="flex items-center gap-1">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                 <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
               </svg>
               {project.stargazers_count}
+              <span className="sr-only">{project.stargazers_count === 1 ? ' estrela · ' : ' estrelas · '}</span>
             </span>
           )}
-          <span>{formatUpdatedAt(project.pushed_at)}</span>
+          {project.pushed_at && (
+            <span>
+              <span className="sr-only">Atualizado em </span>
+              {formatUpdatedAt(project.pushed_at)}
+            </span>
+          )}
         </div>
       </div>
     </article>

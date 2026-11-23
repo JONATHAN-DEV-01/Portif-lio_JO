@@ -1,9 +1,10 @@
 import { useProfile } from '@/hooks/useProfile'
+import { ResumeButtons } from '@/components/ui/ResumeButtons'
 import { TerminalTyping } from './TerminalTyping'
 
 const TECH_BADGES = [
-  'Python', 'React', 'TypeScript', 'Flask', 'FastAPI',
-  'PostgreSQL', 'Docker', 'Git', 'RPA', 'IA/ML',
+  'Java', 'Spring Boot', 'Quarkus', 'Python', 'React', 'Angular',
+  'TypeScript', 'PostgreSQL', 'Docker', 'CI/CD', 'RAG',
 ]
 
 export function HeroSection() {
@@ -36,9 +37,11 @@ export function HeroSection() {
               Jonathan Nascimento
             </h1>
 
+            <p className="text-text-primary text-xl font-medium leading-snug mb-2">
+              Desenvolvedor Full Stack — <span className="whitespace-nowrap">Java | Python | React</span>
+            </p>
             <p className="text-text-secondary text-lg leading-relaxed mb-6 max-w-xl">
-              Desenvolvedor fullstack em <span className="text-text-primary font-medium">Python e React</span>.
-              Estagiário na Prefeitura de São Paulo (SEGES) e estudante de Sistemas de Informação na Impacta.
+              Estagiário de TI na Prefeitura de São Paulo (SEGES/COPATS) · Sistemas de Informação na Impacta
             </p>
 
             <ul className="flex flex-wrap gap-2 mb-8">
@@ -84,20 +87,7 @@ export function HeroSection() {
                 E-mail
               </a>
 
-              <a
-                href="/curriculo-jonathan-nascimento.docx"
-                download="curriculo-jonathan-nascimento.docx"
-                className="btn-ghost"
-                id="hero-cta-resume"
-              >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                  <polyline points="14 2 14 8 20 8" />
-                  <line x1="12" y1="18" x2="12" y2="12" />
-                  <line x1="9" y1="15" x2="15" y2="15" />
-                </svg>
-                Baixar currículo (.docx)
-              </a>
+              <ResumeButtons className="btn-ghost" idPrefix="hero-cta-resume" />
             </div>
 
             <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-8 text-sm text-text-secondary">

@@ -1,3 +1,4 @@
+import { ResumeButtons } from '@/components/ui/ResumeButtons'
 
 interface TimelineItem {
   period: string
@@ -10,13 +11,12 @@ interface TimelineItem {
 
 const TIMELINE: TimelineItem[] = [
   {
-    period: 'mar. 2026 — presente',
+    period: 'mar. 2026 — atual',
     title: 'Estagiário de TI',
-    company: 'Prefeitura de São Paulo — SEGES (COPATS)',
+    company: 'Prefeitura de São Paulo · SEGES (COPATS)',
     bullets: [
-      'Atuo na Coordenadoria de Parcerias com o Terceiro Setor (COPATS), integrando competências técnicas de desenvolvimento à gestão estratégica de parcerias municipais.',
-      'Responsável pelo ciclo de vida de soluções web em WordPress/PHP, do levantamento de requisitos à implementação.',
-      'Uso de Python para automação de processos, web scraping e análise de dados; apoio a soluções de IA generativa com RAG.',
+      'Atuo na Coordenadoria de Parcerias com o Terceiro Setor, responsável pelo ciclo de vida de soluções web em WordPress/PHP, do levantamento de requisitos à implementação.',
+      'Desenvolvo automações em Python (web scraping, tratamento e análise de dados) e apoio soluções de IA generativa com RAG e orquestração de agentes, com foco em transparência e governança das parcerias.',
     ],
     type: 'work',
     current: true,
@@ -26,9 +26,8 @@ const TIMELINE: TimelineItem[] = [
     title: 'Estagiário de Desenvolvimento',
     company: 'Solaris Tech Tecnologia',
     bullets: [
-      'Desenvolvi interfaces e funcionalidades utilizando React, HTML, CSS, JavaScript e SQL em ambiente remoto.',
-      'Implementei controle de acesso baseado em papéis (RBAC) e participei de decisões de arquitetura de software, do modelo de dados ao processo de deploy.',
-      'Colaborei em ciclos de desenvolvimento ágil, integrando front-end e back-end em soluções orientadas a dados.',
+      'Desenvolvi interfaces e funcionalidades com React, JavaScript e SQL em ambiente remoto e ágil, integrando front-end e back-end.',
+      'Implementei controle de acesso baseado em papéis (RBAC) e participei de decisões de arquitetura, do modelo de dados ao processo de deploy.',
     ],
     type: 'work',
   },
@@ -36,10 +35,30 @@ const TIMELINE: TimelineItem[] = [
 
 const EDUCATION = [
   {
-    period: 'cursando — conclusão prevista 12/2027',
+    period: 'cursando — conclusão prevista: dez. 2027',
     title: 'Bacharelado em Sistemas de Informação',
     institution: 'Faculdade Impacta',
     type: 'education',
+  },
+]
+
+const AWARDS = [
+  {
+    kind: 'Prêmio',
+    title: 'Prêmio Melhores Práticas de Estágio',
+    institution: 'Prefeitura de São Paulo (SEGES)',
+    detail: '2026',
+    link: { label: 'Ver publicação', href: 'https://lnkd.in/p/dVNFJwdG' },
+  },
+  {
+    kind: 'Certificação',
+    title: 'Inteligência Artificial e Transformação Digital no Governo',
+    institution: 'Saïd Business School, University of Oxford, com EMASP/Prefeitura de SP e UNESCO',
+    detail: '2026 · 24h',
+    link: {
+      label: 'Ver certificado',
+      href: 'https://www.linkedin.com/in/jonathan-nascimento-8bb679227/details/certifications/',
+    },
   },
 ]
 
@@ -60,7 +79,7 @@ const COURSES = [
     year: '2024',
     title: 'AWS Cloud Foundations',
     institution: 'Amazon',
-    hours: '41–360h',
+    hours: '',
   },
   {
     year: '2024',
@@ -88,20 +107,10 @@ export function ExperienceSection() {
           <div>
             <h2 className="section-title">Experiência & Formação</h2>
           </div>
-          {/* Link para download do currículo */}
-          <a
-            href="/curriculo-jonathan-nascimento.docx"
-            download="Jonathan_Nascimento_CV_FullStack.docx"
-            className="btn-secondary text-sm shrink-0 self-start sm:self-auto"
-            id="download-resume"
-          >
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-              <polyline points="7 10 12 15 17 10" />
-              <line x1="12" y1="15" x2="12" y2="3" />
-            </svg>
-            Baixar currículo (.docx)
-          </a>
+          {/* Download dos currículos */}
+          <div className="flex flex-wrap gap-2 shrink-0">
+            <ResumeButtons className="btn-secondary text-sm" idPrefix="download-resume" />
+          </div>
         </div>
 
         <div className="grid md:grid-cols-3 gap-8 lg:gap-10">
@@ -131,12 +140,7 @@ export function ExperienceSection() {
                     </div>
 
                     <div className="glass-card p-4 hover:border-accent-blue/30 transition-colors">
-                      <div className="flex flex-wrap items-center gap-2 mb-1">
-                        <span className="font-mono text-xs text-text-secondary">{item.period}</span>
-                        {item.current && (
-                          <span className="badge badge-green text-xs">Atual</span>
-                        )}
-                      </div>
+                      <p className="font-mono text-xs text-text-secondary mb-1">{item.period}</p>
                       <h4 className="font-semibold text-text-primary">{item.title}</h4>
                       <p className="text-accent-blue text-sm font-medium mb-2">{item.company}</p>
                       <ul className="mt-2 space-y-1.5 list-none">
@@ -173,13 +177,40 @@ export function ExperienceSection() {
               ))}
             </div>
 
-            {/* Cursos */}
+            {/* Prêmios e certificações */}
             <div
             >
               <h3 className="text-text-primary text-base font-semibold mb-4">
-                Cursos & Certificações
+                Prêmios e Certificações
               </h3>
 
+              <div className="space-y-3 mb-6">
+                {AWARDS.map(award => (
+                  <div key={award.title} className="glass-card p-4 border-l-2 border-accent-green">
+                    <div className="flex items-center justify-between gap-2 mb-1">
+                      <span className="badge badge-green text-xs">{award.kind}</span>
+                      <span className="font-mono text-xs text-text-secondary">{award.detail}</span>
+                    </div>
+                    <h4 className="font-semibold text-text-primary text-sm leading-snug">{award.title}</h4>
+                    <p className="text-text-secondary text-xs mt-0.5">{award.institution}</p>
+                    <a
+                      href={award.link.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 text-accent-blue text-xs font-medium mt-2 hover:underline"
+                    >
+                      {award.link.label}
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                        <polyline points="15 3 21 3 21 9" />
+                        <line x1="10" y1="14" x2="21" y2="3" />
+                      </svg>
+                    </a>
+                  </div>
+                ))}
+              </div>
+
+              <h4 className="text-text-secondary text-sm font-medium mb-3">Outros cursos</h4>
               <div className="space-y-3">
                 {COURSES.map((course, i) => (
                   <div
@@ -193,7 +224,9 @@ export function ExperienceSection() {
                       </div>
                       <div className="shrink-0 text-right">
                         <span className="badge badge-green text-xs">{course.year}</span>
-                        <p className="text-text-secondary text-xs mt-1">{course.hours}</p>
+                        {course.hours && (
+                          <p className="text-text-secondary text-xs mt-1">{course.hours}</p>
+                        )}
                       </div>
                     </div>
                   </div>

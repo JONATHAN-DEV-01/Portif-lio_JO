@@ -65,7 +65,7 @@ export function ProjectModal({ repoName, onClose }: ProjectModalProps) {
         <div>
           {/* Meta */}
           <div className="flex flex-wrap items-center gap-3 mb-4">
-            <DeployBadge isDeployed={project.is_deployed} />
+            <DeployBadge status={project.status ?? 'not_deployed'} />
             {project.language && (
               <span className="text-xs text-text-secondary font-mono">{project.language}</span>
             )}

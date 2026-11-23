@@ -36,6 +36,9 @@ async function postJson<T>(path: string, body: unknown): Promise<T> {
 
 // ---- Types ----
 
+// "paused": deployed, but its database is suspended, so the demo does not work.
+export type ProjectStatus = 'deployed' | 'paused' | 'not_deployed'
+
 export interface Project {
   name: string
   description: string | null
@@ -51,6 +54,8 @@ export interface Project {
   display_order: number
   languages: Record<string, number>
   readme_content: string | null
+  // Filled on the client from src/data/projectOverrides.ts
+  status?: ProjectStatus
 }
 
 export interface Profile {

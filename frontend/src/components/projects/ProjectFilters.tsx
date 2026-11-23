@@ -1,8 +1,15 @@
 interface FilterState {
-  status: 'all' | 'deployed' | 'not-deployed'
+  status: 'all' | 'deployed' | 'paused' | 'not-deployed'
   language: string
   search: string
   sort: 'updated' | 'stars' | 'name'
+}
+
+const STATUS_LABELS: Record<FilterState['status'], string> = {
+  all: 'Todos',
+  deployed: '🟢 Deployado',
+  paused: '⏸️ Demo pausada',
+  'not-deployed': '🟡 Em dev',
 }
 
 interface ProjectFiltersProps {
@@ -40,7 +47,7 @@ export function ProjectFilters({ filters, languages, onChange, total, visible }:
 
       {/* Status filter */}
       <div className="flex flex-wrap justify-center items-center gap-1 bg-surface border border-border rounded-lg p-1 w-full sm:w-auto">
-        {(['all', 'deployed', 'not-deployed'] as const).map(s => (
+        {(['all', 'deployed', 'paused', 'not-deployed'] as const).map(s => (
           <button
             key={s}
             onClick={() => set({ status: s })}
@@ -51,7 +58,7 @@ export function ProjectFilters({ filters, languages, onChange, total, visible }:
             }`}
             id={`filter-status-${s}`}
           >
-            {s === 'all' ? 'Todos' : s === 'deployed' ? '🟢 Deployado' : '🟡 Em dev'}
+            {STATUS_LABELS[s]}
           </button>
         ))}
       </div>

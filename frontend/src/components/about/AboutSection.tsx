@@ -1,21 +1,32 @@
 import { CssDrawer } from '@/components/ui/CssDrawer'
 
+// Same categories as "Competências Técnicas" in the resumes
 const SKILLS = [
-  { category: 'Frontend', items: ['React', 'TypeScript', 'JavaScript', 'HTML', 'CSS', 'Tailwind'] },
-  { category: 'Backend', items: ['Python', 'Flask', 'FastAPI', 'REST APIs'] },
-  { category: 'Banco de Dados', items: ['PostgreSQL', 'MySQL', 'SQLAlchemy', 'Supabase'] },
-  { category: 'DevOps & Cloud', items: ['Docker', 'Git', 'GitHub Actions', 'Render', 'Vercel', 'AWS'] },
-  { category: 'IA & Automação', items: ['Scikit-learn', 'Pandas', 'PyAutoGUI (RPA)', 'Azure AI'] },
-  { category: 'Outros', items: ['WordPress', 'Figma', 'MVC', 'Arq. Hexagonal', 'Linux'] },
+  { category: 'Linguagens', items: ['Java', 'Python', 'TypeScript', 'JavaScript', 'SQL', 'PHP'] },
+  {
+    category: 'Backend',
+    items: ['Spring Boot', 'Spring Data JPA', 'Quarkus', 'Flask', 'APIs REST', 'JWT', 'RBAC', 'Flyway', 'Swagger/OpenAPI', 'arquitetura hexagonal'],
+  },
+  { category: 'Frontend', items: ['React', 'Angular', 'Vite', 'Tailwind CSS', 'shadcn-ui'] },
+  { category: 'Dados', items: ['PostgreSQL', 'MySQL', 'Supabase'] },
+  {
+    category: 'IA',
+    items: ['RAG', 'orquestração de agentes e LLMs', 'Claude Code', 'web scraping', 'Scikit-learn', 'Pandas'],
+  },
+  {
+    category: 'DevOps & Cloud',
+    items: ['Docker', 'Docker Compose', 'GitHub Actions (CI/CD)', 'testes automatizados', 'Linux', 'AWS', 'Azure', 'Render', 'Vercel', 'Oracle Cloud'],
+  },
+  { category: 'Outros', items: ['WordPress/Elementor', 'WordOps'] },
 ]
 
 const BULLETS = [
-  { icon: '🏢', text: 'Estagiário como Desenvolvedor na Prefeitura de São Paulo (SEGES)' },
-  { icon: '🎓', text: 'Estudante de Sistemas de Informação na Faculdade Impacta (formatura 12/2027)' },
-  { icon: '⚙️', text: 'Constrói soluções web completas com React no frontend e Python (Flask) no backend' },
-  { icon: '🏗️', text: 'Foco em boas práticas — padrões MVC e Arquitetura Hexagonal para sistemas escaláveis' },
-  { icon: '🤖', text: 'Entusiasta de RPA (PyAutoGUI) e de IA aplicada (Scikit-learn, Pandas)' },
-  { icon: '☁️', text: 'Deploy em Render, Vercel, Supabase e Docker; interesse em infraestrutura e DevOps' },
+  { icon: '🏢', text: 'Estagiário de TI na Prefeitura de São Paulo (SEGES/COPATS)' },
+  { icon: '🎓', text: 'Estudante de Sistemas de Informação na Faculdade Impacta (conclusão prevista: dez. 2027)' },
+  { icon: '⚙️', text: 'APIs REST em Java 21 (Spring Boot 3 e Quarkus) e Python, com front-ends em React e Angular' },
+  { icon: '🏗️', text: 'Arquitetura hexagonal (ports & adapters), autenticação com JWT e controle de acesso com RBAC' },
+  { icon: '🤖', text: 'IA generativa com RAG e orquestração de agentes na gestão pública; desenvolvimento assistido por IA com Claude Code' },
+  { icon: '☁️', text: 'Base em Docker, Linux e Cloud (AWS, Azure), com deploy em Render, Vercel e Supabase' },
 ]
 
 export function AboutSection() {
@@ -35,12 +46,17 @@ export function AboutSection() {
             className="md:col-span-1 lg:col-span-3"
           >
             <p className="text-text-secondary leading-relaxed mb-6">
-              Desenvolvedor Full Stack com expertise em <span className="text-text-primary font-medium">Python, Flask, React e DevOps</span>,
-              aliando lógica de programação a conhecimentos sólidos de Hardware e Redes.
-              Foco em performance e automação de ponta a ponta.
+              Desenvolvedor Full Stack em formação (Sistemas de Informação) com experiência prática em{' '}
+              <span className="text-text-primary font-medium">Java 21 (Spring Boot 3 e Quarkus), Python, React e Angular</span>,
+              APIs REST e PostgreSQL. Atuo também com automação em Python, IA generativa (RAG) aplicada à gestão
+              pública e desenvolvimento assistido por agentes de IA (Claude Code).
             </p>
             <p className="text-text-secondary leading-relaxed mb-8">
-              Destaque: desenvolveu e mantém em produção uma aplicação completa de gestão de estoque — <span className="font-mono text-accent-blue text-sm">gestao_estoque</span> (API em Arquitetura Hexagonal) + <span className="font-mono text-accent-blue text-sm">stockflow-for-sellers</span> (frontend TypeScript) — além do <span className="font-mono text-accent-blue text-sm">BolaoWorldCup</span>, que operou em produção com usuários reais.
+              Destaque: desenvolvi e mantenho em produção o <span className="font-mono text-accent-blue text-sm">Chamados_Joveretec</span>,
+              sistema de gestão de chamados usado diariamente pela equipe, com 313 testes automatizados e pipeline CI/CD.
+              Também fiz o deploy do StockFlow — <span className="font-mono text-accent-blue text-sm">gestao_estoque</span> (API em arquitetura hexagonal)
+              + <span className="font-mono text-accent-blue text-sm">stockflow-for-sellers</span> (frontend) — e do{' '}
+              <span className="font-mono text-accent-blue text-sm">BolaoWorldCup</span>, usado em produção durante a Copa com usuários reais.
             </p>
 
             <ul className="space-y-3">

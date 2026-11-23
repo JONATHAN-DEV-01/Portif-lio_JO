@@ -8,14 +8,14 @@ interface TerminalLine {
 
 const SEQUENCE: TerminalLine[] = [
   { type: 'command', text: 'whoami', delay: 400 },
-  { type: 'output', text: 'jonathan-nascimento — dev fullstack | python & react', delay: 400 },
+  { type: 'output', text: 'jonathan-nascimento — dev full stack | java, python & react', delay: 400 },
   { type: 'command', text: 'cat sobre.txt', delay: 1200 },
-  { type: 'output', text: '> Estagiário Dev @ Prefeitura de SP (SEGES)', delay: 200 },
+  { type: 'output', text: '> Estagiário de TI @ Prefeitura de SP (SEGES/COPATS)', delay: 200 },
   { type: 'output', text: '> Estudante de Sistemas de Informação — Impacta', delay: 200 },
-  { type: 'output', text: '> Entusiasta de RPA, IA e Arquitetura Hexagonal', delay: 200 },
+  { type: 'output', text: '> APIs REST, arquitetura hexagonal, RAG e CI/CD', delay: 200 },
   { type: 'command', text: 'ls projetos/', delay: 1400 },
-  { type: 'output', text: 'gestao_estoque/  stockflow-for-sellers/  BolaoWorldCup/', delay: 300 },
-  { type: 'output', text: 'Back_Delivery/   IA_Recomendacao_jogos/  rpa_final/', delay: 200 },
+  { type: 'output', text: 'Chamados_Joveretec/  projeto-fullstack-orquestracao/', delay: 300 },
+  { type: 'output', text: 'gestao_estoque/  BolaoWorldCup/  brasileirao-rag/', delay: 200 },
   { type: 'command', text: 'echo "Bem-vindo ao meu portfólio! 🚀"', delay: 1600 },
   { type: 'output', text: 'Bem-vindo ao meu portfólio! 🚀', delay: 400 },
 ]
